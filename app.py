@@ -74,7 +74,6 @@ st.markdown("""
    FORCE LIGHT MODE — override every Streamlit dark-mode style
    ══════════════════════════════════════════════════════════════ */
 
-/* ─── Global body + all text ─── */
 html, body, [class*="css"],
 .stMarkdown, .stMarkdown p, .stMarkdown li,
 .stMarkdown span, .stMarkdown div,
@@ -83,7 +82,6 @@ html, body, [class*="css"],
     color: #191919 !important;
 }
 
-/* Subtitle text on pages */
 .page-subtitle {
     color: #666666 !important;
     font-size: 0.95rem !important;
@@ -111,80 +109,133 @@ section[data-testid="stSidebar"] * {
     color: #191919 !important;
 }
 
-section[data-testid="stSidebar"] .stMarkdown h1 {
-    color: #0A66C2 !important;
-    font-size: 1.35rem !important;
-    font-weight: 700 !important;
-}
+/* ════════════════════════════════════════════════
+   SIDEBAR NAV — Professional button navigation
+   ════════════════════════════════════════════════ */
 
-section[data-testid="stSidebar"] .stRadio > label {
-    display: none !important;
-}
-
-section[data-testid="stSidebar"] .stRadio > div {
-    gap: 2px !important;
-}
-
-section[data-testid="stSidebar"] .stRadio > div > label {
+/* Base: every button in sidebar gets nav treatment */
+section[data-testid="stSidebar"] .stButton > button {
     background: transparent !important;
+    background-color: transparent !important;
+    color: #555555 !important;
     border: none !important;
-    border-radius: 8px !important;
-    padding: 10px 16px !important;
-    margin: 0 !important;
+    border-left: 3px solid transparent !important;
+    border-radius: 0 6px 6px 0 !important;
     font-weight: 500 !important;
-    font-size: 0.9rem !important;
-    color: #666666 !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer !important;
+    font-size: 0.875rem !important;
+    padding: 11px 16px 11px 14px !important;
+    text-align: left !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    box-shadow: none !important;
+    /* Smooth transitions for all interactive states */
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        font-weight 0.1s ease !important;
+    margin: 1px 0 !important;
+    letter-spacing: 0.15px !important;
+    line-height: 1.4 !important;
 }
 
-/* HIDE the radio button dot/circle indicator — exact Streamlit selector */
-[data-testid="stRadioSelectionIndicator"] {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-}
-
-/* Fallback: hide radio input and any indicator divs */
-div[role="radiogroup"] input[type="radio"] {
-    display: none !important;
-}
-
-/* Hide pseudo-elements that might render dots */
-div[role="radiogroup"] label div::before,
-div[role="radiogroup"] label div::after {
-    content: none !important;
-    display: none !important;
-}
-
-/* Hide any SVG radio indicators */
-section[data-testid="stSidebar"] .stRadio svg {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-}
-
-section[data-testid="stSidebar"] .stRadio > div > label p {
-    color: #666666 !important;
-}
-
-section[data-testid="stSidebar"] .stRadio > div > label:hover {
-    background: #E8F1FB !important;
+/* HOVER — subtle blue tint, light left rule */
+section[data-testid="stSidebar"] .stButton > button:hover {
+    background: #EEF4FC !important;
+    background-color: #EEF4FC !important;
     color: #0A66C2 !important;
-}
-section[data-testid="stSidebar"] .stRadio > div > label:hover p {
-    color: #0A66C2 !important;
+    border-left: 3px solid #A8C8EE !important;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
-section[data-testid="stSidebar"] .stRadio > div > label[data-checked="true"],
-section[data-testid="stSidebar"] .stRadio > div > label[aria-checked="true"] {
-    background: #E8F1FB !important;
+section[data-testid="stSidebar"] .stButton > button p,
+section[data-testid="stSidebar"] .stButton > button span {
+    color: inherit !important;
+    font-size: 0.875rem !important;
+    font-weight: inherit !important;
+    text-align: left !important;
 }
-section[data-testid="stSidebar"] .stRadio > div > label[data-checked="true"] p,
-section[data-testid="stSidebar"] .stRadio > div > label[aria-checked="true"] p {
+
+/* ACTIVE — solid blue indicator, filled background */
+.nav-btn-active .stButton > button {
+    background: #E4EFFA !important;
+    background-color: #E4EFFA !important;
     color: #0A66C2 !important;
+    font-weight: 650 !important;
+    border-left: 3px solid #0A66C2 !important;
+    border-radius: 0 6px 6px 0 !important;
+    padding-left: 14px !important;
+    box-shadow: inset 0 0 0 0 transparent !important;
+}
+
+/* Active hover — slightly darker, indicator stays solid */
+.nav-btn-active .stButton > button:hover {
+    background: #D6E8F7 !important;
+    background-color: #D6E8F7 !important;
+    border-left: 3px solid #0A66C2 !important;
+    color: #004182 !important;
+}
+
+.nav-btn-active .stButton > button p,
+.nav-btn-active .stButton > button span {
+    color: inherit !important;
+    font-weight: 650 !important;
+}
+
+/* ════════════════════════════════════════════════
+   TRACKER CARD — Update & Delete button styling
+   ════════════════════════════════════════════════ */
+
+.tracker-action-row .stButton > button {
+    height: 40px !important;
+    min-height: 40px !important;
+    border-radius: 7px !important;
+    font-size: 0.82rem !important;
     font-weight: 600 !important;
+    padding: 0 10px !important;
+    width: 100% !important;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+    transform: none !important;
+}
+
+/* ✔ Update — solid blue (2nd column) */
+.tracker-action-row div[data-testid="column"]:nth-child(2) .stButton > button {
+    background: #0A66C2 !important;
+    background-color: #0A66C2 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+}
+
+.tracker-action-row div[data-testid="column"]:nth-child(2) .stButton > button:hover {
+    background: #004E9A !important;
+    background-color: #004E9A !important;
+    box-shadow: 0 2px 8px rgba(10,102,194,0.3) !important;
+}
+
+.tracker-action-row div[data-testid="column"]:nth-child(2) .stButton > button p,
+.tracker-action-row div[data-testid="column"]:nth-child(2) .stButton > button span {
+    color: #FFFFFF !important;
+}
+
+/* ✖ Delete — white with red border (3rd column) */
+.tracker-action-row div[data-testid="column"]:nth-child(3) .stButton > button {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    color: #C62828 !important;
+    border: 1.5px solid #EDBBBB !important;
+}
+
+.tracker-action-row div[data-testid="column"]:nth-child(3) .stButton > button:hover {
+    background: #FFF0F0 !important;
+    background-color: #FFF0F0 !important;
+    border-color: #C62828 !important;
+    box-shadow: 0 2px 8px rgba(198,40,40,0.15) !important;
+}
+
+.tracker-action-row div[data-testid="column"]:nth-child(3) .stButton > button p,
+.tracker-action-row div[data-testid="column"]:nth-child(3) .stButton > button span {
+    color: inherit !important;
 }
 
 /* Sidebar dividers */
@@ -198,7 +249,7 @@ section[data-testid="stSidebar"] hr {
     max-width: 1200px !important;
 }
 
-/* ─── ALL text elements — nuclear override ─── */
+/* ─── ALL text elements ─── */
 h1 {
     color: #191919 !important;
     font-weight: 700 !important;
@@ -221,7 +272,7 @@ h3 {
     font-size: 1rem !important;
 }
 
-/* ─── Cards / Containers — force white bg ─── */
+/* ─── Cards / Containers ─── */
 div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
@@ -238,8 +289,9 @@ div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapp
     background: #FFFFFF !important;
 }
 
-/* ─── Buttons ─── */
-.stButton > button {
+/* ─── Main content Buttons (non-sidebar) ─── */
+.block-container .stButton > button,
+[data-testid="stMainBlockContainer"] .stButton > button {
     background: #0A66C2 !important;
     background-color: #0A66C2 !important;
     color: #FFFFFF !important;
@@ -252,7 +304,8 @@ div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapp
     box-shadow: none !important;
 }
 
-.stButton > button:hover {
+.block-container .stButton > button:hover,
+[data-testid="stMainBlockContainer"] .stButton > button:hover {
     background: #004182 !important;
     background-color: #004182 !important;
     color: #FFFFFF !important;
@@ -260,16 +313,14 @@ div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapp
     transform: translateY(-1px);
 }
 
-.stButton > button:active {
-    transform: translateY(0);
-}
-
-.stButton > button p,
-.stButton > button span {
+.block-container .stButton > button p,
+.block-container .stButton > button span,
+[data-testid="stMainBlockContainer"] .stButton > button p,
+[data-testid="stMainBlockContainer"] .stButton > button span {
     color: #FFFFFF !important;
 }
 
-/* Secondary / outline buttons */
+/* Download buttons */
 .stDownloadButton > button {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
@@ -291,7 +342,7 @@ div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapp
     color: #0A66C2 !important;
 }
 
-/* ─── ALL Inputs — force light ─── */
+/* ─── Inputs ─── */
 input, textarea, select {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
@@ -351,20 +402,148 @@ input, textarea, select {
     color: #444444 !important;
 }
 
-/* Make file uploader label clearly visible above dropzone */
-.stFileUploader label {
+/* ─── FILE UPLOADER — FULLY FIXED ─── */
+/* Force the entire file uploader area to be light */
+.stFileUploader,
+.stFileUploader > div,
+.stFileUploader > label,
+[data-testid="stFileUploader"],
+[data-testid="stFileUploaderDropzone"],
+[data-testid="stFileUploaderDropzoneInstructions"],
+section[data-testid="stFileUploader"],
+section[data-testid="stFileUploaderDropzone"] {
+    background: #FAFAFA !important;
+    background-color: #FAFAFA !important;
+    color: #666666 !important;
+}
+
+/* The dropzone border and layout */
+[data-testid="stFileUploaderDropzone"] {
+    border: 2px dashed #D0D0D0 !important;
+    border-radius: 10px !important;
+    padding: 20px !important;
+}
+
+[data-testid="stFileUploaderDropzone"]:hover {
+    border-color: #0A66C2 !important;
+    background: #E8F1FB !important;
+    background-color: #E8F1FB !important;
+}
+
+/* Force ALL text/spans inside dropzone to dark */
+[data-testid="stFileUploaderDropzone"] span,
+[data-testid="stFileUploaderDropzone"] p,
+[data-testid="stFileUploaderDropzone"] div,
+[data-testid="stFileUploaderDropzone"] small,
+[data-testid="stFileUploaderDropzone"] *,
+[data-testid="stFileUploaderDropzoneInstructions"] span,
+[data-testid="stFileUploaderDropzoneInstructions"] p,
+[data-testid="stFileUploaderDropzoneInstructions"] small {
+    color: #555555 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Browse files button inside uploader */
+[data-testid="stFileUploaderDropzone"] button,
+[data-testid="stFileUploader"] button {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    color: #0A66C2 !important;
+    border: 1.5px solid #0A66C2 !important;
+    border-radius: 8px !important;
     font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    color: #191919 !important;
-    margin-bottom: 8px !important;
-    display: block !important;
+    padding: 6px 16px !important;
 }
 
-.stFileUploader label p {
-    color: #191919 !important;
+[data-testid="stFileUploaderDropzone"] button:hover,
+[data-testid="stFileUploader"] button:hover {
+    background: #E8F1FB !important;
+    background-color: #E8F1FB !important;
 }
 
-/* ─── Selectbox — force light ─── */
+[data-testid="stFileUploaderDropzone"] button p,
+[data-testid="stFileUploaderDropzone"] button span,
+[data-testid="stFileUploader"] button p,
+[data-testid="stFileUploader"] button span {
+    color: #0A66C2 !important;
+}
+
+/* Uploaded file name display */
+[data-testid="stFileUploader"] [data-testid="stMarkdownContainer"],
+[data-testid="stFileUploader"] span[title] {
+    color: #191919 !important;
+    background: transparent !important;
+}
+
+/* ─── CHECKBOX — FULLY FIXED ─── */
+/* Reset any overflow/writing-mode issues */
+.stCheckbox,
+.stCheckbox > div,
+.stCheckbox label,
+[data-testid="stCheckbox"],
+[data-testid="stCheckbox"] > label {
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: unset !important;
+}
+
+/* The checkbox box itself — keep it square and sane */
+[data-baseweb="checkbox"] {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    writing-mode: horizontal-tb !important;
+}
+
+[data-baseweb="checkbox"] > div:first-child {
+    width: 18px !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    min-height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    border: 2px solid #C0C0C0 !important;
+    border-radius: 4px !important;
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    flex-shrink: 0 !important;
+    writing-mode: horizontal-tb !important;
+    overflow: hidden !important;
+}
+
+/* Checked state */
+[data-baseweb="checkbox"][aria-checked="true"] > div:first-child {
+    background: #0A66C2 !important;
+    background-color: #0A66C2 !important;
+    border-color: #0A66C2 !important;
+}
+
+/* Checkbox label text — force horizontal */
+[data-baseweb="checkbox"] [class*="label"],
+[data-baseweb="checkbox"] span,
+.stCheckbox label span,
+.stCheckbox label p,
+.stCheckbox span {
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    white-space: nowrap !important;
+    color: #444444 !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    display: inline !important;
+}
+
+/* ─── Selectbox ─── */
 .stSelectbox > div > div,
 .stSelectbox [data-baseweb="select"],
 .stSelectbox [data-baseweb="select"] > div {
@@ -380,7 +559,6 @@ input, textarea, select {
     color: #191919 !important;
 }
 
-/* Selectbox dropdown menu */
 [data-baseweb="popover"],
 [data-baseweb="menu"],
 [data-baseweb="popover"] ul,
@@ -408,7 +586,7 @@ ul[role="listbox"] li:hover,
     color: #0A66C2 !important;
 }
 
-/* ─── Date Input — force light ─── */
+/* ─── Date Input ─── */
 .stDateInput > div > div,
 .stDateInput input,
 .stDateInput [data-baseweb="input"],
@@ -424,7 +602,6 @@ ul[role="listbox"] li:hover,
     color: #191919 !important;
 }
 
-/* Date picker calendar popup */
 [data-baseweb="calendar"],
 [data-baseweb="datepicker"],
 [data-baseweb="calendar"] div,
@@ -434,56 +611,7 @@ ul[role="listbox"] li:hover,
     color: #191919 !important;
 }
 
-/* ─── Checkbox — force visible text ─── */
-.stCheckbox,
-.stCheckbox label,
-.stCheckbox span,
-.stCheckbox p {
-    color: #666666 !important;
-    font-weight: 500 !important;
-    font-size: 0.9rem !important;
-}
-
-.stCheckbox [data-testid="stCheckbox"] label span {
-    color: #666666 !important;
-}
-
-/* ─── File uploader — force light ─── */
-.stFileUploader > div,
-.stFileUploader section,
-.stFileUploader [data-testid="stFileUploader"],
-.stFileUploader [data-testid="stFileUploaderDropzone"] {
-    background: #FAFAFA !important;
-    background-color: #FAFAFA !important;
-    border: 2px dashed #D0D0D0 !important;
-    border-radius: 10px !important;
-    padding: 24px !important;
-    color: #666666 !important;
-}
-
-.stFileUploader > div:hover,
-.stFileUploader [data-testid="stFileUploaderDropzone"]:hover {
-    border-color: #0A66C2 !important;
-    background: #E8F1FB !important;
-    background-color: #E8F1FB !important;
-}
-
-.stFileUploader span,
-.stFileUploader p,
-.stFileUploader div,
-.stFileUploader small,
-.stFileUploader label {
-    color: #666666 !important;
-}
-
-.stFileUploader button {
-    background: #FFFFFF !important;
-    color: #0A66C2 !important;
-    border: 1.5px solid #0A66C2 !important;
-    border-radius: 8px !important;
-}
-
-/* ─── Metrics — force white card ─── */
+/* ─── Metrics ─── */
 div[data-testid="stMetric"] {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
@@ -515,7 +643,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
     color: #057642 !important;
 }
 
-/* ─── Expander — force light ─── */
+/* ─── Expander ─── */
 .streamlit-expanderHeader,
 details > summary,
 [data-testid="stExpander"] summary,
@@ -547,15 +675,10 @@ details > div,
     color: #191919 !important;
 }
 
-/* ─── Code blocks — FORCE LIGHT background ─── */
-.stCodeBlock,
-.stCodeBlock > div,
-.stCodeBlock pre,
-.stCodeBlock code,
-[data-testid="stCodeBlock"],
-[data-testid="stCodeBlock"] > div,
-[data-testid="stCodeBlock"] pre,
-[data-testid="stCodeBlock"] code,
+/* ─── Code blocks ─── */
+.stCodeBlock, .stCodeBlock > div, .stCodeBlock pre, .stCodeBlock code,
+[data-testid="stCodeBlock"], [data-testid="stCodeBlock"] > div,
+[data-testid="stCodeBlock"] pre, [data-testid="stCodeBlock"] code,
 pre, code {
     background: #F8F9FA !important;
     background-color: #F8F9FA !important;
@@ -564,60 +687,38 @@ pre, code {
     border-radius: 10px !important;
 }
 
-.stCodeBlock pre code,
-[data-testid="stCodeBlock"] pre code {
+.stCodeBlock pre code, [data-testid="stCodeBlock"] pre code {
     border: none !important;
 }
 
-/* Code copy button */
-.stCodeBlock button,
-[data-testid="stCodeBlock"] button {
-    background: #FFFFFF !important;
-    border: 1px solid #E0E0E0 !important;
-    color: #666666 !important;
-}
-
-/* ─── Alerts / info / warning / error — force light ─── */
-.stAlert,
-[data-testid="stAlert"],
-.stAlert > div,
-[data-baseweb="notification"] {
+/* ─── Alerts ─── */
+.stAlert, [data-testid="stAlert"], .stAlert > div, [data-baseweb="notification"] {
     border-radius: 10px !important;
     font-size: 0.85rem !important;
     padding: 14px 18px !important;
     border: none !important;
 }
 
-/* Info alert */
-[data-testid="stAlert"][data-type="info"],
-div[role="alert"]:not([data-type]) {
+[data-testid="stAlert"][data-type="info"], div[role="alert"]:not([data-type]) {
     background: #E8F1FB !important;
     background-color: #E8F1FB !important;
     color: #0A66C2 !important;
 }
 
-div[role="alert"] p,
-[data-testid="stAlert"] p,
-.stAlert p {
-    color: inherit !important;
-}
+div[role="alert"] p, [data-testid="stAlert"] p, .stAlert p { color: inherit !important; }
 
-/* Success alert */
-[data-testid="stAlert"][data-type="success"],
-.stSuccess {
+[data-testid="stAlert"][data-type="success"], .stSuccess {
     background: #E8F5E9 !important;
     background-color: #E8F5E9 !important;
     color: #057642 !important;
 }
 
-/* Warning alert */
 [data-testid="stAlert"][data-type="warning"] {
     background: #FFF8E1 !important;
     background-color: #FFF8E1 !important;
     color: #915B00 !important;
 }
 
-/* Error alert */
 [data-testid="stAlert"][data-type="error"] {
     background: #FFEBEE !important;
     background-color: #FFEBEE !important;
@@ -641,9 +742,8 @@ hr {
     margin: 24px 0 !important;
 }
 
-/* ─── Forms — force white ─── */
-[data-testid="stForm"],
-[data-testid="stForm"] > div {
+/* ─── Forms ─── */
+[data-testid="stForm"], [data-testid="stForm"] > div {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
     border: 1px solid #E0E0E0 !important;
@@ -653,17 +753,15 @@ hr {
     color: #191919 !important;
 }
 
-/* Form submit button */
 [data-testid="stForm"] .stButton > button,
 .stFormSubmitButton > button {
     background: #0A66C2 !important;
     color: #FFFFFF !important;
+    border-radius: 24px !important;
 }
 
 [data-testid="stForm"] .stButton > button p,
-.stFormSubmitButton > button p {
-    color: #FFFFFF !important;
-}
+.stFormSubmitButton > button p { color: #FFFFFF !important; }
 
 /* ─── Caption ─── */
 .stCaption, [data-testid="stCaptionContainer"],
@@ -672,43 +770,22 @@ hr {
     font-size: 0.8rem !important;
 }
 
-/* ─── Markdown text ─── */
-.stMarkdown p {
-    color: #191919 !important;
-}
-
-.stMarkdown strong, .stMarkdown b {
-    color: #191919 !important;
-}
-
-.stMarkdown a {
-    color: #0A66C2 !important;
-}
+/* ─── Markdown ─── */
+.stMarkdown p { color: #191919 !important; }
+.stMarkdown strong, .stMarkdown b { color: #191919 !important; }
+.stMarkdown a { color: #0A66C2 !important; }
 
 /* ─── Spinner ─── */
-.stSpinner > div > div {
-    border-top-color: #0A66C2 !important;
-}
+.stSpinner > div > div { border-top-color: #0A66C2 !important; }
 
 /* ─── Scrollbar ─── */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #F3F2EF;
-}
-::-webkit-scrollbar-thumb {
-    background: #C4C4C4;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #A0A0A0;
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #F3F2EF; }
+::-webkit-scrollbar-thumb { background: #C4C4C4; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #A0A0A0; }
 
-/* ─── Tooltip / popover ─── */
-[data-baseweb="tooltip"],
-[data-baseweb="popover"] > div {
+/* ─── Tooltip ─── */
+[data-baseweb="tooltip"], [data-baseweb="popover"] > div {
     background: #FFFFFF !important;
     color: #191919 !important;
     border: 1px solid #E0E0E0 !important;
@@ -804,11 +881,7 @@ hr {
     line-height: 1.6;
     margin-bottom: 12px;
 }
-.feature-card ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+.feature-card ul { list-style: none; padding: 0; margin: 0; }
 .feature-card ul li {
     font-size: 0.84rem;
     color: #666666 !important;
@@ -925,27 +998,17 @@ hr {
     letter-spacing: 0.2px;
 }
 
-.custom-footer strong {
-    color: #666666 !important;
-}
+.custom-footer strong { color: #666666 !important; }
 
-/* ─── Spacing & overlap fixes ─── */
+/* ─── Spacing fixes ─── */
 div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"] {
     gap: 12px !important;
 }
 
-div[data-testid="column"] {
-    padding: 0 6px !important;
-}
+div[data-testid="column"] { padding: 0 6px !important; }
 
-/* ─── Prevent tight overlap on all pages ─── */
-.stMarkdown {
-    margin-bottom: 4px !important;
-}
-
-.element-container {
-    margin-bottom: 8px !important;
-}
+.stMarkdown { margin-bottom: 4px !important; }
+.element-container { margin-bottom: 8px !important; }
 
 </style>
 """, unsafe_allow_html=True)
@@ -960,14 +1023,11 @@ _DEFAULTS = {
     "generated_resume": None,
     "cover_letter": None,
     "match_result": None,
+    "page": "home",  # Track current page via session state
 }
 for _k, _v in _DEFAULTS.items():
     if _k not in st.session_state:
         st.session_state[_k] = _v
-
-# Initialize nav selection in session state
-if "nav_selection" not in st.session_state:
-    st.session_state.nav_selection = "🏠 Home"
 
 _api_ok = check_ollama_connection()
 
@@ -981,8 +1041,9 @@ def _show_resume(text: str):
     st.code(text, language=None)
 
 
-def _on_nav_change():
-    """Reset transient results when switching pages."""
+def _set_page(page_key: str):
+    """Navigate to a page and reset transient results."""
+    st.session_state.page = page_key
     for key in ["optimized_resume", "generated_resume", "cover_letter", "match_result"]:
         st.session_state[key] = None
 
@@ -1009,7 +1070,6 @@ STATUS_CSS_CLASS = {
 
 
 def _section_header(icon: str, title: str, subtitle: str = ""):
-    """Render a styled section header with icon box."""
     sub_html = f"<p>{subtitle}</p>" if subtitle else ""
     st.markdown(f"""
     <div class="section-header">
@@ -1022,31 +1082,30 @@ def _section_header(icon: str, title: str, subtitle: str = ""):
     """, unsafe_allow_html=True)
 
 
+def _nav_button(label: str, page_key: str):
+    """Render a sidebar nav button, highlighted if active."""
+    is_active = st.session_state.page == page_key
+    if is_active:
+        st.markdown('<div class="nav-btn-active">', unsafe_allow_html=True)
+    clicked = st.button(label, key=f"nav_{page_key}", use_container_width=True)
+    if is_active:
+        st.markdown('</div>', unsafe_allow_html=True)
+    if clicked:
+        _set_page(page_key)
+        st.rerun()
+
+
 # ════════════════════════════════════════════════════════════════════════════════
 #  SIDEBAR
 # ════════════════════════════════════════════════════════════════════════════════
-
-_NAV_OPTIONS = [
-    "🏠 Home",
-    "🔧 Optimize Resume",
-    "📝 Build from Scratch",
-    "📊 Application Tracker",
-    "📁 Resume History",
-]
-
-_NAV_MAP = {
-    "🏠 Home": "home",
-    "🔧 Optimize Resume": "optimize",
-    "📝 Build from Scratch": "build",
-    "📊 Application Tracker": "tracker",
-    "📁 Resume History": "history",
-}
 
 with st.sidebar:
     st.markdown("""
     <div style="padding: 16px 4px 8px 4px;">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #0A66C2, #004182); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: white;">📄</div>
+            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #0A66C2, #004182);
+                        border-radius: 8px; display: flex; align-items: center; justify-content: center;
+                        font-size: 1.1rem; color: white;">📄</div>
             <div>
                 <div style="font-size: 1.1rem; font-weight: 700; color: #191919; letter-spacing: -0.3px;">Resume Generator</div>
                 <div style="font-size: 0.72rem; color: #8C8C8C; font-weight: 500;">AI-Powered Career Tools · v2.0</div>
@@ -1066,13 +1125,19 @@ with st.sidebar:
 
     st.divider()
 
-    st.radio(
-        "Navigation",
-        _NAV_OPTIONS,
-        key="nav_selection",
-        on_change=_on_nav_change,
-        label_visibility="collapsed",
-    )
+    # ── Button-based navigation ──
+    st.markdown("""
+    <div style="padding: 4px 4px 6px 4px;">
+        <span style="font-size:0.68rem; font-weight:700; color:#BBBBBB;
+                     text-transform:uppercase; letter-spacing:1.2px;">Menu</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    _nav_button("Home", "home")
+    _nav_button("Optimize Resume", "optimize")
+    _nav_button("Build from Scratch", "build")
+    _nav_button("Application Tracker", "tracker")
+    _nav_button("Resume History", "history")
 
     st.divider()
     st.markdown("""
@@ -1081,7 +1146,8 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-page = _NAV_MAP[st.session_state.nav_selection]
+# Read current page from session state
+page = st.session_state.page
 
 
 # ════════════════════════════════════════════════════════════════════════════════
@@ -1089,7 +1155,6 @@ page = _NAV_MAP[st.session_state.nav_selection]
 # ════════════════════════════════════════════════════════════════════════════════
 
 if page == "home":
-    # Hero banner
     st.markdown("""
     <div class="hero-banner">
         <h1>Welcome to AI Resume Generator</h1>
@@ -1100,7 +1165,6 @@ if page == "home":
     </div>
     """, unsafe_allow_html=True)
 
-    # Feature cards
     c1, c2 = st.columns(2, gap="large")
     with c1:
         st.markdown("""
@@ -1179,7 +1243,6 @@ elif page == "optimize":
         unsafe_allow_html=True,
     )
 
-    # --- Input Section ---
     _section_header("📤", "Upload & Input", "Provide your resume and target job description")
 
     c1, c2 = st.columns(2, gap="large")
@@ -1225,7 +1288,6 @@ elif page == "optimize":
                     match = calculate_match_score(resume_text, jd)
                     st.session_state.match_result = match
 
-                # --- Skill Match Analysis ---
                 _section_header("📊", "Skill Match Analysis", "How well your resume matches the job")
 
                 score = match.score
@@ -1257,14 +1319,12 @@ elif page == "optimize":
                         chart = {c: i["score"] for c, i in match.category_breakdown.items()}
                         st.bar_chart(chart, height=250)
 
-                # --- Optimization ---
                 prog = st.progress(0, text="Optimizing your resume...")
                 prog.progress(30, text="Generating optimized content...")
                 optimized = optimize_resume(resume_text, jd)
                 prog.progress(100, text="Optimization complete.")
                 st.session_state.optimized_resume = optimized
 
-                # --- Resume Preview ---
                 _section_header("👁️", "Resume Preview", "Review your optimized resume")
                 pdf_bytes = None
                 try:
@@ -1274,7 +1334,6 @@ elif page == "optimize":
                     logger.warning(f"PDF preview failed: {e}")
                     _show_resume(optimized)
 
-                # --- Download Actions ---
                 st.divider()
                 d1, d2, d3 = st.columns(3, gap="medium")
                 with d1:
@@ -1294,12 +1353,10 @@ elif page == "optimize":
                     save_resume(optimized, "optimized")
                     st.success("✅ Saved to history.")
 
-                # --- AI Suggestions ---
                 with st.expander("💡 AI Improvement Suggestions"):
                     with st.spinner("Analyzing..."):
                         st.markdown(generate_suggestions(optimized, jd))
 
-                # --- Cover Letter ---
                 if want_cover:
                     with st.spinner("Generating cover letter..."):
                         cover = generate_cover_letter(optimized, jd)
@@ -1336,7 +1393,6 @@ elif page == "build":
         unsafe_allow_html=True,
     )
 
-    # --- Personal Information ---
     _section_header("👤", "Personal Information", "Your basic contact details")
     c1, c2 = st.columns(2, gap="large")
     with c1:
@@ -1350,7 +1406,6 @@ elif page == "build":
 
     st.divider()
 
-    # --- Education ---
     _section_header("🎓", "Education", "Academic qualifications")
     c1, c2 = st.columns(2, gap="large")
     with c1:
@@ -1362,7 +1417,6 @@ elif page == "build":
 
     st.divider()
 
-    # --- Experience ---
     _section_header("💼", "Experience", "Optional — Work experience & internships")
     experience = st.text_area(
         "Work experience / internships", height=120,
@@ -1371,7 +1425,6 @@ elif page == "build":
 
     st.divider()
 
-    # --- Projects ---
     _section_header("🛠️", "Projects", "Describe your key projects")
     projects = st.text_area(
         "Describe your projects", height=120,
@@ -1380,7 +1433,6 @@ elif page == "build":
 
     st.divider()
 
-    # --- Skills ---
     _section_header("⚡", "Skills", "Technical and soft skills")
     skills = st.text_area(
         "List your skills (comma separated)",
@@ -1389,7 +1441,6 @@ elif page == "build":
 
     st.divider()
 
-    # --- Achievements ---
     _section_header("🏆", "Achievements & Certifications", "Optional — Awards, certs, extras")
     achievements = st.text_area(
         "Certifications / Achievements / Extra-curriculars",
@@ -1398,7 +1449,6 @@ elif page == "build":
 
     st.divider()
 
-    # --- Target JD ---
     _section_header("🎯", "Target Job Description", "Optional but recommended for tailored results")
     jd_scratch = st.text_area(
         "Job Description", height=150,
@@ -1440,7 +1490,6 @@ elif page == "build":
                 prog.progress(100, text="Resume generated.")
                 st.session_state.generated_resume = resume
 
-                # --- Resume Preview ---
                 _section_header("👁️", "Resume Preview", "Your AI-generated resume")
                 pdf_bytes = None
                 try:
@@ -1450,7 +1499,6 @@ elif page == "build":
                     logger.warning(f"PDF preview failed: {e}")
                     _show_resume(resume)
 
-                # --- Download Actions ---
                 st.divider()
                 d1, d2, d3 = st.columns(3, gap="medium")
                 with d1:
@@ -1470,12 +1518,10 @@ elif page == "build":
                     save_resume(resume, "generated")
                     st.success("✅ Saved to history.")
 
-                # --- AI Suggestions ---
                 with st.expander("💡 AI Improvement Suggestions"):
                     with st.spinner("Analyzing..."):
                         st.markdown(generate_suggestions(resume, jd_scratch))
 
-                # --- Cover Letter ---
                 if want_cover2 and jd_scratch and jd_scratch.strip():
                     with st.spinner("Generating cover letter..."):
                         cover = generate_cover_letter(resume, jd_scratch)
@@ -1511,7 +1557,6 @@ elif page == "tracker":
         unsafe_allow_html=True,
     )
 
-    # --- Add New Application Form ---
     with st.form("add_app", clear_on_submit=True):
         _section_header("➕", "Add New Application", "Log a new job application")
         c1, c2, c3 = st.columns(3, gap="large")
@@ -1543,11 +1588,9 @@ elif page == "tracker":
 
     st.divider()
 
-    # --- Load & Display Applications ---
     apps = load_applications()
 
     if not apps.empty:
-        # --- Summary Metrics ---
         _section_header("📈", "Overview", "Your application statistics at a glance")
         m1, m2, m3, m4 = st.columns(4, gap="medium")
         with m1:
@@ -1562,7 +1605,6 @@ elif page == "tracker":
             count_offers = len(apps[apps["status"] == "Offer Received"]) if "status" in apps.columns else 0
             st.metric("Offers", count_offers)
 
-        # --- Status Chart ---
         if "status" in apps.columns:
             with st.expander("📊 Status Distribution Chart"):
                 try:
@@ -1597,7 +1639,6 @@ elif page == "tracker":
 
         st.divider()
 
-        # --- Filters ---
         _section_header("🔍", "Filter Applications", "Search and filter your applications")
         f1, f2, f3 = st.columns([2, 2, 1], gap="large")
         with f1:
@@ -1645,7 +1686,6 @@ elif page == "tracker":
                 css_cls = STATUS_CSS_CLASS.get(cs, "status-applied")
 
                 with st.container(border=True):
-                    # Application header row
                     top1, top2 = st.columns([4, 1])
                     with top1:
                         st.markdown(f"**{co}** — {ro}")
@@ -1661,8 +1701,9 @@ elif page == "tracker":
                             unsafe_allow_html=True,
                         )
 
-                    # Action row
-                    a1, a2, a3 = st.columns([3, 1, 1], gap="medium")
+                    # Action row — narrower selectbox + buttons grouped left
+                    st.markdown('<div class="tracker-action-row">', unsafe_allow_html=True)
+                    a1, a2, a3, a4 = st.columns([3, 1, 1, 2], gap="small")
                     with a1:
                         ns = st.selectbox(
                             "Status", APPLICATION_STATUSES,
@@ -1670,20 +1711,26 @@ elif page == "tracker":
                             key=f"s_{idx}", label_visibility="collapsed",
                         )
                     with a2:
-                        if st.button("Update", key=f"u_{idx}", use_container_width=True):
-                            if ns != cs:
-                                if update_application_status(idx, ns):
-                                    st.success(f"Updated to **{ns}**")
-                                    st.rerun()
-                                else:
-                                    st.error("Failed to update.")
-                            else:
-                                st.info("Status unchanged.")
+                        update_clicked = st.button("Update", key=f"u_{idx}", use_container_width=True)
                     with a3:
-                        if st.button("🗑️ Delete", key=f"d_{idx}", use_container_width=True):
-                            st.session_state[f"cdel_{idx}"] = True
+                        delete_clicked = st.button("Delete", key=f"d_{idx}", use_container_width=True)
+                    with a4:
+                        pass  # spacer
+                    st.markdown('</div>', unsafe_allow_html=True)
 
-                    # Delete confirmation
+                    if update_clicked:
+                        if ns != cs:
+                            if update_application_status(idx, ns):
+                                st.success(f"Updated to **{ns}**")
+                                st.rerun()
+                            else:
+                                st.error("Failed to update.")
+                        else:
+                            st.info("Status unchanged.")
+
+                    if delete_clicked:
+                        st.session_state[f"cdel_{idx}"] = True
+
                     if st.session_state.get(f"cdel_{idx}", False):
                         st.warning(f"Delete **{ro}** at **{co}**?")
                         y, n, _ = st.columns([1, 1, 4])
@@ -1717,7 +1764,6 @@ elif page == "history":
 
     if resumes:
         st.metric("Total Resumes Saved", len(resumes))
-
         st.markdown("<div style='height: 12px'></div>", unsafe_allow_html=True)
 
         for i, entry in enumerate(resumes):
@@ -1725,9 +1771,7 @@ elif page == "history":
             ts = entry.get("timestamp", "Unknown")
             cc = entry.get("char_count", len(entry.get("content", "")))
             mode_icon = "📝" if entry.get("mode") == "generated" else "🔧"
-            badge_cls = "generated" if entry.get("mode") == "generated" else "optimized"
 
-            # Styled header for the expander
             with st.expander(f"{mode_icon} {mode} — {ts} ({cc:,} chars)", expanded=(i == 0)):
                 content = entry.get("content", "")
                 _show_resume(content)
