@@ -12,8 +12,9 @@ venv/
 .venv/
 env/
 
-# ─── Environment Variables ─────────────────────────────────────────────────────
+# ─── Environment Variables & Secrets ───────────────────────────────────────
 .env
+.streamlit/secrets.toml
 
 # ─── Application Data ─────────────────────────────────────────────────────────
 data/

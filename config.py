@@ -14,11 +14,8 @@ LLM_MAX_TOKENS = 4096
 LLM_MAX_RETRIES = 3
 LLM_RETRY_DELAY = 2  # seconds (base for exponential backoff)
 
-# ─── File & Storage Configuration ──────────────────────────────────────────────
+# ─── Logging Configuration ─────────────────────────────────────────────────────
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
-RESUMES_FILE = os.path.join(DATA_DIR, "resumes.json")
-APPLICATIONS_FILE = os.path.join(DATA_DIR, "applications.csv")
 LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 LOG_FILE = os.path.join(LOG_DIR, "app.log")
 

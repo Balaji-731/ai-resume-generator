@@ -1,194 +1,224 @@
 """
-Storage — Persistent data management for resumes and job applications.
-Handles JSON and CSV storage with validation, thread safety, and CRUD operations.
+Storage — Cloud data management using Supabase PostgreSQL.
+Handles resume and job application CRUD with per-user data isolation.
 """
 
-import json
-import csv
-import os
-import threading
 import pandas as pd
 from datetime import datetime
 
-from config import DATA_DIR, RESUMES_FILE, APPLICATIONS_FILE, APPLICATION_FIELDS
+from supabase_client import get_supabase
+from config import APPLICATION_FIELDS
 from logger import get_logger
 
 logger = get_logger(__name__)
 
-# Thread lock for file operations
-_file_lock = threading.Lock()
-
-
-def _ensure_data_dir() -> None:
-    """Create the data directory if it doesn't exist."""
-    os.makedirs(DATA_DIR, exist_ok=True)
-
 
 # ─── Resume Storage ────────────────────────────────────────────────────────────
 
-def save_resume(resume_text: str, mode: str = "generated") -> dict:
+def save_resume(resume_text: str, mode: str = "generated", user_id: str = None) -> dict:
     """
-    Save a resume to the JSON store.
+    Save a resume to the Supabase resumes table.
 
     Args:
         resume_text: The resume text content.
         mode: Generation mode — 'generated' or 'optimized'.
+        user_id: The authenticated user's UUID.
 
     Returns:
         The saved resume entry dict.
 
     Raises:
-        ValueError: If resume text is empty.
+        ValueError: If resume text is empty or user_id is missing.
     """
     if not resume_text or not resume_text.strip():
         raise ValueError("Cannot save an empty resume.")
+    if not user_id:
+        raise ValueError("User ID is required to save a resume.")
 
-    _ensure_data_dir()
-
-    with _file_lock:
-        resumes = _load_resumes_raw()
-
+    try:
+        supabase = get_supabase()
         entry = {
-            "id": len(resumes) + 1,
+            "user_id": user_id,
             "mode": mode,
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "content": resume_text,
             "char_count": len(resume_text),
         }
-        resumes.append(entry)
+        response = supabase.table("resumes").insert(entry).execute()
 
-        with open(RESUMES_FILE, "w", encoding="utf-8") as f:
-            json.dump(resumes, f, indent=2, ensure_ascii=False)
+        logger.info(f"Resume saved — user: {user_id}, mode: {mode}, size: {len(resume_text)} chars")
+        return response.data[0] if response.data else entry
 
-    logger.info(f"Resume saved — id: {entry['id']}, mode: {mode}, size: {len(resume_text)} chars")
-    return entry
+    except Exception as e:
+        logger.error(f"Failed to save resume: {e}")
+        raise
 
 
-def load_resumes() -> list:
+def load_resumes(user_id: str = None) -> list:
     """
-    Load all saved resumes from the JSON store.
+    Load all saved resumes for a user from Supabase.
+
+    Args:
+        user_id: The authenticated user's UUID.
 
     Returns:
         List of resume entry dicts, newest first.
     """
-    resumes = _load_resumes_raw()
-    logger.info(f"Loaded {len(resumes)} saved resume(s)")
-    return list(reversed(resumes))  # newest first
-
-
-def _load_resumes_raw() -> list:
-    """Load raw resume list from file."""
-    if not os.path.exists(RESUMES_FILE):
+    if not user_id:
         return []
+
     try:
-        with open(RESUMES_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data if isinstance(data, list) else []
-    except (json.JSONDecodeError, OSError) as e:
+        supabase = get_supabase()
+        response = (
+            supabase.table("resumes")
+            .select("*")
+            .eq("user_id", user_id)
+            .order("created_at", desc=True)
+            .execute()
+        )
+        resumes = response.data or []
+        logger.info(f"Loaded {len(resumes)} resume(s) for user {user_id}")
+
+        # Map 'created_at' to 'timestamp' for backward compatibility with UI
+        for r in resumes:
+            r["timestamp"] = r.get("created_at", "Unknown")
+
+        return resumes
+
+    except Exception as e:
         logger.error(f"Failed to load resumes: {e}")
         return []
 
 
 # ─── Application Storage ───────────────────────────────────────────────────────
 
-def save_application(app: dict) -> None:
+def save_application(app: dict, user_id: str = None) -> None:
     """
-    Save a job application entry to CSV.
+    Save a job application entry to Supabase.
 
     Args:
         app: Dictionary with application fields (company, role, date, status, link, notes).
+        user_id: The authenticated user's UUID.
 
     Raises:
-        ValueError: If required fields (company, role) are missing.
+        ValueError: If required fields (company, role) or user_id are missing.
     """
     if not app.get("company", "").strip():
         raise ValueError("Company name is required.")
     if not app.get("role", "").strip():
         raise ValueError("Job role is required.")
+    if not user_id:
+        raise ValueError("User ID is required to save an application.")
 
-    _ensure_data_dir()
+    try:
+        supabase = get_supabase()
+        entry = {
+            "user_id": user_id,
+            "company": app.get("company", ""),
+            "role": app.get("role", ""),
+            "date": app.get("date", ""),
+            "status": app.get("status", "Applied"),
+            "link": app.get("link", ""),
+            "notes": app.get("notes", ""),
+        }
+        supabase.table("applications").insert(entry).execute()
+        logger.info(f"Application saved — {app.get('company')} / {app.get('role')}")
 
-    with _file_lock:
-        file_exists = os.path.exists(APPLICATIONS_FILE)
-        with open(APPLICATIONS_FILE, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=APPLICATION_FIELDS)
-            if not file_exists:
-                writer.writeheader()
-            # Ensure all fields exist with defaults
-            row = {field: app.get(field, "") for field in APPLICATION_FIELDS}
-            writer.writerow(row)
-
-    logger.info(f"Application saved — {app.get('company')} / {app.get('role')}")
+    except Exception as e:
+        logger.error(f"Failed to save application: {e}")
+        raise
 
 
-def load_applications() -> pd.DataFrame:
+def load_applications(user_id: str = None) -> pd.DataFrame:
     """
-    Load all job applications from CSV.
+    Load all job applications for a user from Supabase.
+
+    Args:
+        user_id: The authenticated user's UUID.
 
     Returns:
         DataFrame with application data, or empty DataFrame if no data.
     """
-    if not os.path.exists(APPLICATIONS_FILE):
+    if not user_id:
         return pd.DataFrame(columns=APPLICATION_FIELDS)
+
     try:
-        df = pd.read_csv(APPLICATIONS_FILE, encoding="utf-8")
-        logger.info(f"Loaded {len(df)} application(s)")
-        return df
+        supabase = get_supabase()
+        response = (
+            supabase.table("applications")
+            .select("*")
+            .eq("user_id", user_id)
+            .order("created_at", desc=True)
+            .execute()
+        )
+        data = response.data or []
+        if data:
+            df = pd.DataFrame(data)
+            logger.info(f"Loaded {len(df)} application(s) for user {user_id}")
+            return df
+        else:
+            return pd.DataFrame(columns=APPLICATION_FIELDS)
+
     except Exception as e:
         logger.error(f"Failed to load applications: {e}")
         return pd.DataFrame(columns=APPLICATION_FIELDS)
 
 
-def update_application_status(index: int, new_status: str) -> bool:
+def update_application_status(app_id: int, new_status: str) -> bool:
     """
-    Update the status of an application by its row index.
+    Update the status of an application by its database ID.
 
     Args:
-        index: Row index (0-based) in the CSV.
+        app_id: The application row ID in Supabase.
         new_status: New status value.
 
     Returns:
         True if update succeeded, False otherwise.
     """
     try:
-        df = load_applications()
-        if index < 0 or index >= len(df):
-            logger.warning(f"Invalid application index: {index}")
+        supabase = get_supabase()
+        response = (
+            supabase.table("applications")
+            .update({"status": new_status})
+            .eq("id", app_id)
+            .execute()
+        )
+        if response.data:
+            logger.info(f"Application {app_id} status updated to: {new_status}")
+            return True
+        else:
+            logger.warning(f"No application found with id: {app_id}")
             return False
 
-        df.at[index, "status"] = new_status
-        with _file_lock:
-            df.to_csv(APPLICATIONS_FILE, index=False, encoding="utf-8")
-
-        logger.info(f"Application {index} status updated to: {new_status}")
-        return True
     except Exception as e:
         logger.error(f"Failed to update application status: {e}")
         return False
 
 
-def delete_application(index: int) -> bool:
+def delete_application(app_id: int) -> bool:
     """
-    Delete an application entry by its row index.
+    Delete an application entry by its database ID.
 
     Args:
-        index: Row index (0-based) in the CSV.
+        app_id: The application row ID in Supabase.
 
     Returns:
         True if deletion succeeded, False otherwise.
     """
     try:
-        df = load_applications()
-        if index < 0 or index >= len(df):
-            logger.warning(f"Invalid application index: {index}")
+        supabase = get_supabase()
+        response = (
+            supabase.table("applications")
+            .delete()
+            .eq("id", app_id)
+            .execute()
+        )
+        if response.data:
+            logger.info(f"Application {app_id} deleted")
+            return True
+        else:
+            logger.warning(f"No application found with id: {app_id}")
             return False
 
-        df = df.drop(index).reset_index(drop=True)
-        with _file_lock:
-            df.to_csv(APPLICATIONS_FILE, index=False, encoding="utf-8")
-
-        logger.info(f"Application {index} deleted")
-        return True
     except Exception as e:
         logger.error(f"Failed to delete application: {e}")
         return False

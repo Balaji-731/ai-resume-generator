@@ -19,6 +19,7 @@ from config import APPLICATION_STATUSES
 from llm_helper import LLMError, check_ollama_connection
 from pdf_generator import generate_pdf, get_pdf_preview_html, AVAILABLE_TEMPLATES
 from suggestions import generate_suggestions
+from auth import sign_up, sign_in, sign_out, get_current_user, is_authenticated
 from logger import get_logger
 
 logger = get_logger(__name__)
@@ -548,6 +549,140 @@ div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock
 div[data-testid="column"] { padding: 0 6px !important; }
 .stMarkdown { margin-bottom: 4px !important; }
 .element-container { margin-bottom: 8px !important; }
+
+/* ════════════════════════════════════════════
+   LOGIN / SIGNUP PAGE — Split-Panel Design
+   ════════════════════════════════════════════ */
+
+.auth-card {
+    display: flex;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+    min-height: 520px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ── Left panel — gradient welcome ── */
+.auth-left {
+    flex: 1;
+    background: linear-gradient(145deg, #1A7ADA 0%, #0A66C2 40%, #004182 100%);
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+}
+
+/* Decorative circles */
+.auth-left .circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.12;
+}
+.auth-left .circle-1 {
+    width: 280px; height: 280px;
+    background: #3B9BF5;
+    bottom: -60px; left: -50px;
+    opacity: 0.18;
+}
+.auth-left .circle-2 {
+    width: 180px; height: 180px;
+    background: #64B5F6;
+    top: -40px; right: -30px;
+    opacity: 0.15;
+}
+.auth-left .circle-3 {
+    width: 100px; height: 100px;
+    background: #FFFFFF;
+    bottom: 60px; right: 30px;
+    opacity: 0.08;
+}
+
+.auth-left .auth-logo {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; color: #FFFFFF;
+    margin-bottom: 28px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.25);
+    position: relative; z-index: 1;
+}
+.auth-left h1 {
+    color: #FFFFFF !important;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 4px !important;
+    letter-spacing: -0.5px !important;
+    position: relative; z-index: 1;
+}
+.auth-left .subtitle {
+    color: rgba(255,255,255,0.7) !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 24px;
+    position: relative; z-index: 1;
+}
+.auth-left .tagline {
+    color: rgba(255,255,255,0.55) !important;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    position: relative; z-index: 1;
+}
+
+/* ── Right panel — form ── */
+.auth-right-placeholder {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(10, 102, 194, 0.08);
+    border: 1px solid rgba(10, 102, 194, 0.15);
+    border-radius: 10px;
+    margin-bottom: 4px;
+}
+.user-badge .avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #0A66C2, #0556A8);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    flex-shrink: 0;
+}
+.user-badge .user-info {
+    flex: 1;
+    min-width: 0;
+}
+.user-badge .user-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #E8F2FF !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.user-badge .user-email {
+    font-size: 0.68rem;
+    color: #4A7A9B !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -566,10 +701,201 @@ _DEFAULTS = {
     "opt_suggestions": None,
     "gen_pdf_bytes": None,
     "gen_suggestions": None,
+    "auth_mode": "signin",  # 'signin' or 'signup'
 }
 for _k, _v in _DEFAULTS.items():
     if _k not in st.session_state:
         st.session_state[_k] = _v
+
+
+# ════════════════════════════════════════════════════════════════════════════════
+#  AUTH GATE — Login / Sign Up
+# ════════════════════════════════════════════════════════════════════════════════
+
+if not is_authenticated():
+    st.markdown("""
+    <style>
+        section[data-testid="stSidebar"] { display: none !important; }
+
+        .block-container {
+            max-width: 520px !important;
+            padding-top: 2rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+
+        /* Hide "Press Enter to submit form" */
+        [data-testid="InputInstructions"] { display: none !important; }
+
+        /* ── Make the form look like the white bottom half of the card ── */
+        [data-testid="stForm"] {
+            background: #FFFFFF !important;
+            border: 1px solid #E0E0E0 !important;
+            border-top: none !important;
+            border-radius: 0 0 16px 16px !important;
+            padding: 28px 32px 24px 32px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06) !important;
+            margin-top: -16px !important;
+        }
+        [data-testid="stForm"] > div {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        /* Remove default card wrappers so nothing interferes */
+        .block-container div[data-testid="stVerticalBlockBorderWrapper"] {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+        .block-container div[data-testid="stVerticalBlockBorderWrapper"] > div {
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        /* Auth switch button — outline style */
+        .auth-switch .stButton > button {
+            background: transparent !important;
+            color: #0A66C2 !important;
+            border: 1.5px solid #0A66C2 !important;
+            border-radius: 24px !important;
+            font-weight: 600 !important;
+            font-size: 0.85rem !important;
+            margin-top: 4px !important;
+        }
+        .auth-switch .stButton > button:hover {
+            background: #E8F1FB !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .auth-switch .stButton > button p,
+        .auth-switch .stButton > button span {
+            color: #0A66C2 !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    auth_mode = st.session_state.get("auth_mode", "signin")
+
+    # ── Gradient header (pure HTML — renders perfectly) ──
+    st.markdown("""
+    <div style="background: linear-gradient(145deg, #1A7ADA 0%, #0A66C2 40%, #004182 100%);
+                border-radius: 16px 16px 0 0; padding: 36px 36px 28px 36px;
+                text-align: center; position: relative; overflow: hidden;">
+        <div style="position:absolute; width:220px; height:220px; border-radius:50%;
+                    background:rgba(255,255,255,0.07); top:-80px; right:-60px;"></div>
+        <div style="position:absolute; width:160px; height:160px; border-radius:50%;
+                    background:rgba(255,255,255,0.05); bottom:-50px; left:-40px;"></div>
+        <div style="position:relative; z-index:1;">
+            <div style="width:46px; height:46px; background:rgba(255,255,255,0.18);
+                        border-radius:12px; display:inline-flex; align-items:center; justify-content:center;
+                        font-size:1.25rem; color:#FFFFFF; margin-bottom:14px;
+                        border:1px solid rgba(255,255,255,0.25);">
+                <i class="bi bi-file-earmark-text"></i>
+            </div>
+            <h1 style="color:#FFFFFF !important; font-size:1.45rem !important; font-weight:700 !important;
+                       margin-bottom:4px !important;">AI Resume Generator</h1>
+            <p style="color:rgba(255,255,255,0.65) !important; font-size:0.82rem; margin:0;">
+                Sign in to access your career dashboard
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── SIGN IN (form IS the white card) ──
+    if auth_mode == "signin":
+        with st.form("signin_form", clear_on_submit=False, border=True):
+            st.markdown("""<p style="font-size:1.1rem; font-weight:700; color:#191919 !important;
+                           margin-bottom:2px;">Welcome back</p>
+                           <p style="font-size:0.8rem; color:#999 !important; margin-bottom:12px;">
+                           Enter your credentials to continue</p>""", unsafe_allow_html=True)
+            email = st.text_input("Email", placeholder="you@example.com", key="si_email")
+            password = st.text_input("Password", type="password", placeholder="Enter your password", key="si_pass")
+            st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+            submitted = st.form_submit_button("Sign In", use_container_width=True, type="primary")
+
+            if submitted:
+                if not email or not password:
+                    st.error("Please enter both email and password.")
+                else:
+                    with st.spinner("Signing in..."):
+                        result = sign_in(email, password)
+                    if result["success"]:
+                        st.session_state.current_user = result["user"]
+                        st.rerun()
+                    else:
+                        st.error(result["error"])
+
+            st.markdown("""<p style="text-align:center; font-size:0.82rem; color:#999 !important;
+                           margin: 10px 0 0 0;">Don't have an account?</p>""", unsafe_allow_html=True)
+
+        st.markdown('<div class="auth-switch">', unsafe_allow_html=True)
+        if st.button("Create Account", key="switch_signup", use_container_width=True):
+            st.session_state.auth_mode = "signup"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # ── SIGN UP (form IS the white card) ──
+    elif auth_mode == "signup":
+        with st.form("signup_form", clear_on_submit=False, border=True):
+            st.markdown("""<p style="font-size:1.1rem; font-weight:700; color:#191919 !important;
+                           margin-bottom:2px;">Create your account</p>
+                           <p style="font-size:0.8rem; color:#999 !important; margin-bottom:12px;">
+                           Fill in your details to get started</p>""", unsafe_allow_html=True)
+            name = st.text_input("Full Name", placeholder="John Doe", key="su_name")
+            email = st.text_input("Email", placeholder="you@example.com", key="su_email")
+            password = st.text_input("Password", type="password", placeholder="Min. 6 characters", key="su_pass")
+            confirm = st.text_input("Confirm Password", type="password", placeholder="Re-enter password", key="su_confirm")
+            st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+            submitted = st.form_submit_button("Create Account", use_container_width=True, type="primary")
+
+            if submitted:
+                if not name or not email or not password:
+                    st.error("All fields are required.")
+                elif password != confirm:
+                    st.error("Passwords do not match.")
+                elif len(password) < 6:
+                    st.error("Password must be at least 6 characters.")
+                else:
+                    with st.spinner("Creating your account..."):
+                        result = sign_up(email, password, name)
+                    if result["success"]:
+                        st.session_state.current_user = result["user"]
+                        st.success("Account created successfully!")
+                        st.rerun()
+                    else:
+                        st.error(result["error"])
+
+            st.markdown("""<p style="text-align:center; font-size:0.82rem; color:#999 !important;
+                           margin: 10px 0 0 0;">Already have an account?</p>""", unsafe_allow_html=True)
+
+        st.markdown('<div class="auth-switch">', unsafe_allow_html=True)
+        if st.button("Sign In", key="switch_signin", use_container_width=True):
+            st.session_state.auth_mode = "signin"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Footer
+    st.markdown("""
+    <div style="text-align:center; padding:20px 0 4px 0; color:#B0B0B0; font-size:0.72rem;">
+        Powered by <strong style="color:#999;">Supabase</strong>
+        · Built with <strong style="color:#999;">Streamlit</strong>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.stop()
+
+
+# ════════════════════════════════════════════════════════════════════════════════
+#  AUTHENTICATED APP — Everything below requires login
+# ════════════════════════════════════════════════════════════════════════════════
+
+_user = get_current_user()
+_user_id = _user["id"]
+_user_name = _user.get("name", "User")
+_user_email = _user.get("email", "")
 
 _api_ok = check_ollama_connection()
 
@@ -676,6 +1002,24 @@ with st.sidebar:
 
     st.divider()
 
+    # ── User badge ──
+    initials = "".join([n[0].upper() for n in _user_name.split()[:2]]) if _user_name else "U"
+    st.markdown(f"""
+    <div class="user-badge">
+        <div class="avatar">{initials}</div>
+        <div class="user-info">
+            <div class="user-name">{_user_name}</div>
+            <div class="user-email">{_user_email}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.button("Sign Out", key="btn_signout", use_container_width=True):
+        sign_out()
+        st.rerun()
+
+    st.divider()
+
     if _api_ok:
         st.markdown('<div class="status-online"><i class="bi bi-check-circle-fill"></i> Ollama Connected</div>', unsafe_allow_html=True)
     else:
@@ -713,9 +1057,9 @@ page = st.session_state.page
 # ════════════════════════════════════════════════════════════════════════════════
 
 if page == "home":
-    st.markdown("""
+    st.markdown(f"""
     <div class="hero-banner">
-        <h1>Welcome to AI Resume Generator</h1>
+        <h1>Welcome back, {_user_name}</h1>
         <p>
             Intelligent resume analysis, optimization, and career assistance — powered by local AI.<br>
             Build professional, ATS-optimized resumes and track your job applications in one place.
@@ -843,7 +1187,7 @@ elif page == "optimize":
                     with st.spinner("Generating cover letter..."):
                         st.session_state.cover_letter = generate_cover_letter(optimized, jd)
 
-                save_resume(optimized, "optimized")
+                save_resume(optimized, "optimized", user_id=_user_id)
 
             except ResumeParseError as e:
                 st.error(f"Resume Parse Error: {e}"); logger.error(f"Parse error: {e}")
@@ -1004,7 +1348,7 @@ elif page == "build":
                     with st.spinner("Generating cover letter..."):
                         st.session_state.cover_letter = generate_cover_letter(resume, jd_scratch)
 
-                save_resume(resume, "generated")
+                save_resume(resume, "generated", user_id=_user_id)
 
             except ValueError as e: st.warning(str(e))
             except LLMError as e: st.error(f"AI Error: {e}"); logger.error(f"LLM error: {e}")
@@ -1065,14 +1409,14 @@ elif page == "tracker":
                 st.warning("Company Name and Job Role are required.")
             else:
                 try:
-                    save_application({"company": company, "role": role, "date": str(app_date), "status": status, "link": link, "notes": notes})
+                    save_application({"company": company, "role": role, "date": str(app_date), "status": status, "link": link, "notes": notes}, user_id=_user_id)
                     st.success(f"Saved: **{role}** at **{company}**")
                     st.rerun()
                 except Exception as e:
                     st.error(f"Failed to save: {e}")
 
     st.divider()
-    apps = load_applications()
+    apps = load_applications(user_id=_user_id)
 
     if not apps.empty:
         _section_header("bi-graph-up", "Overview", "Your application statistics at a glance")
@@ -1118,11 +1462,11 @@ elif page == "tracker":
         if filtered.empty:
             st.info("No applications match your filter.")
         else:
-            for idx in filtered.index:
-                r = filtered.loc[idx]
+            for _, r in filtered.iterrows():
                 co = r.get("company", "Unknown"); ro = r.get("role", "Unknown")
                 cs = r.get("status", "Applied"); lk = r.get("link", "")
                 nt = r.get("notes", ""); dt = str(r.get("date", ""))
+                app_id = r.get("id")  # Supabase row ID
                 emoji = STATUS_COLORS.get(cs, "●"); css_cls = STATUS_CSS_CLASS.get(cs, "status-applied")
 
                 with st.container(border=True):
@@ -1130,38 +1474,38 @@ elif page == "tracker":
                     with top1:
                         st.markdown(f"**{co}** — {ro}")
                         info_parts = [f"{dt}"]
-                        if lk and lk.strip(): info_parts.append(f"[Link]({lk})")
+                        if lk and str(lk).strip(): info_parts.append(f"[Link]({lk})")
                         st.caption(" · ".join(info_parts))
-                        if nt and nt.strip(): st.caption(nt)
+                        if nt and str(nt).strip(): st.caption(nt)
                     with top2:
                         st.markdown(f'<div class="status-badge {css_cls}">{emoji} {cs}</div>', unsafe_allow_html=True)
 
                     st.markdown('<div class="tracker-action-row">', unsafe_allow_html=True)
                     a1, a2, a3, a4 = st.columns([3, 1, 1, 2], gap="small")
                     with a1:
-                        ns = st.selectbox("Status", APPLICATION_STATUSES, index=APPLICATION_STATUSES.index(cs) if cs in APPLICATION_STATUSES else 0, key=f"s_{idx}", label_visibility="collapsed")
-                    with a2: update_clicked = st.button("Update", key=f"u_{idx}", use_container_width=True)
-                    with a3: delete_clicked = st.button("Delete", key=f"d_{idx}", use_container_width=True)
+                        ns = st.selectbox("Status", APPLICATION_STATUSES, index=APPLICATION_STATUSES.index(cs) if cs in APPLICATION_STATUSES else 0, key=f"s_{app_id}", label_visibility="collapsed")
+                    with a2: update_clicked = st.button("Update", key=f"u_{app_id}", use_container_width=True)
+                    with a3: delete_clicked = st.button("Delete", key=f"d_{app_id}", use_container_width=True)
                     with a4: pass
                     st.markdown('</div>', unsafe_allow_html=True)
 
                     if update_clicked:
                         if ns != cs:
-                            if update_application_status(idx, ns): st.success(f"Updated to **{ns}**"); st.rerun()
+                            if update_application_status(app_id, ns): st.success(f"Updated to **{ns}**"); st.rerun()
                             else: st.error("Failed to update.")
                         else: st.info("Status unchanged.")
 
-                    if delete_clicked: st.session_state[f"cdel_{idx}"] = True
+                    if delete_clicked: st.session_state[f"cdel_{app_id}"] = True
 
-                    if st.session_state.get(f"cdel_{idx}", False):
+                    if st.session_state.get(f"cdel_{app_id}", False):
                         st.warning(f"Delete **{ro}** at **{co}**?")
                         y, n, _ = st.columns([1, 1, 4])
                         with y:
-                            if st.button("Yes", key=f"cy_{idx}", use_container_width=True):
-                                if delete_application(idx): st.session_state.pop(f"cdel_{idx}", None); st.rerun()
+                            if st.button("Yes", key=f"cy_{app_id}", use_container_width=True):
+                                if delete_application(app_id): st.session_state.pop(f"cdel_{app_id}", None); st.rerun()
                         with n:
-                            if st.button("Cancel", key=f"cn_{idx}", use_container_width=True):
-                                st.session_state.pop(f"cdel_{idx}", None); st.rerun()
+                            if st.button("Cancel", key=f"cn_{app_id}", use_container_width=True):
+                                st.session_state.pop(f"cdel_{app_id}", None); st.rerun()
     else:
         st.info("No applications tracked yet. Add your first application using the form above.")
 
@@ -1174,13 +1518,13 @@ elif page == "history":
     st.title("Resume History")
     st.markdown('<p class="page-subtitle">Browse all your previously generated and optimized resumes with quick download access.</p>', unsafe_allow_html=True)
 
-    resumes = load_resumes()
+    resumes = load_resumes(user_id=_user_id)
     if resumes:
         st.metric("Total Resumes Saved", len(resumes))
         st.markdown("<div style='height: 12px'></div>", unsafe_allow_html=True)
         for i, entry in enumerate(resumes):
             mode = "Generated" if entry.get("mode") == "generated" else "Optimized"
-            ts = entry.get("timestamp", "Unknown")
+            ts = entry.get("timestamp", entry.get("created_at", "Unknown"))
             cc = entry.get("char_count", len(entry.get("content", "")))
             mode_icon = "bi-pencil-square" if entry.get("mode") == "generated" else "bi-wrench-adjustable"
             with st.expander(f"{mode} — {ts} ({cc:,} chars)", expanded=(i == 0)):
