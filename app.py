@@ -43,6 +43,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
 
 #MainMenu, footer, header { visibility: hidden; }
 
@@ -517,7 +518,7 @@ hr { border: none !important; border-top: 1px solid #E0E0E0 !important; margin: 
     transition: all 0.25s ease; height: 100%;
 }
 .feature-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); border-color: #0A66C2; }
-.feature-card .card-icon { width: 48px; height: 48px; background: #E8F1FB; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 16px; }
+.feature-card .card-icon { width: 48px; height: 48px; background: #E8F1FB; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 16px; color: #0A66C2; }
 .feature-card h3 { font-size: 1.05rem !important; font-weight: 700 !important; color: #191919 !important; margin-bottom: 8px !important; }
 .feature-card p { font-size: 0.88rem; color: #666666 !important; line-height: 1.6; margin-bottom: 12px; }
 .feature-card ul { list-style: none; padding: 0; margin: 0; }
@@ -525,7 +526,7 @@ hr { border: none !important; border-top: 1px solid #E0E0E0 !important; margin: 
 .feature-card ul li::before { content: '✓'; color: #0A66C2; font-weight: 700; font-size: 0.85rem; }
 
 .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; margin-top: 8px; }
-.section-header .icon-box { width: 40px; height: 40px; background: #E8F1FB; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
+.section-header .icon-box { width: 40px; height: 40px; background: #E8F1FB; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; color: #0A66C2; }
 .section-header h2 { font-size: 1.15rem !important; font-weight: 700 !important; color: #191919 !important; margin: 0 !important; padding: 0 !important; }
 .section-header p { font-size: 0.82rem; color: #8C8C8C !important; margin: 2px 0 0 0; }
 
@@ -619,8 +620,8 @@ def _set_page(page_key: str):
 
 
 STATUS_COLORS = {
-    "Applied": "🔵", "Interview Scheduled": "🟢", "Under Review": "🟡",
-    "Rejected": "🔴", "Offer Received": "🟢", "Accepted": "✅", "Withdrawn": "⚪",
+    "Applied": "●", "Interview Scheduled": "●", "Under Review": "●",
+    "Rejected": "●", "Offer Received": "●", "Accepted": "●", "Withdrawn": "●",
 }
 
 STATUS_CSS_CLASS = {
@@ -634,7 +635,7 @@ def _section_header(icon: str, title: str, subtitle: str = ""):
     sub_html = f"<p>{subtitle}</p>" if subtitle else ""
     st.markdown(f"""
     <div class="section-header">
-        <div class="icon-box">{icon}</div>
+        <div class="icon-box"><i class="bi {icon}"></i></div>
         <div><h2>{title}</h2>{sub_html}</div>
     </div>
     """, unsafe_allow_html=True)
@@ -665,7 +666,7 @@ with st.sidebar:
                         border-radius: 8px;
                         display: flex; align-items: center; justify-content: center;
                         font-size: 1rem; color: white;
-                        box-shadow: 0 4px 12px rgba(10,102,194,0.45);">📄</div>
+                        box-shadow: 0 4px 12px rgba(10,102,194,0.45);"><i class="bi bi-file-earmark-text"></i></div>
             <div>
                 <div style="font-size: 0.95rem; font-weight: 700; color: #E8F2FF; letter-spacing: -0.2px;">Resume Generator</div>
                 <div style="font-size: 0.65rem; color: #4A7A9B; font-weight: 500; margin-top: 1px;">AI-Powered Career Tool</div>
@@ -677,9 +678,9 @@ with st.sidebar:
     st.divider()
 
     if _api_ok:
-        st.markdown('<div class="status-online">🟢 Ollama Connected</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status-online"><i class="bi bi-check-circle-fill"></i> Ollama Connected</div>', unsafe_allow_html=True)
     else:
-        st.markdown('<div class="status-offline">🔴 Ollama Offline</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status-offline"><i class="bi bi-x-circle-fill"></i> Ollama Offline</div>', unsafe_allow_html=True)
         st.caption("Run `ollama serve` to start.")
 
     st.divider()
@@ -727,7 +728,7 @@ if page == "home":
     with c1:
         st.markdown("""
         <div class="feature-card">
-            <div class="card-icon">🔧</div>
+            <div class="card-icon"><i class="bi bi-wrench-adjustable"></i></div>
             <h3>Optimize Existing Resume</h3>
             <p>Upload your resume and a job description. AI will analyze, optimize, and tailor it for ATS compatibility.</p>
             <ul>
@@ -741,7 +742,7 @@ if page == "home":
     with c2:
         st.markdown("""
         <div class="feature-card">
-            <div class="card-icon">📝</div>
+            <div class="card-icon"><i class="bi bi-pencil-square"></i></div>
             <h3>Build Resume from Scratch</h3>
             <p>No resume? Fill in guided fields and AI will generate a complete professional resume for you.</p>
             <ul>
@@ -757,7 +758,7 @@ if page == "home":
     with c3:
         st.markdown("""
         <div class="feature-card">
-            <div class="card-icon">📊</div>
+            <div class="card-icon"><i class="bi bi-bar-chart-line"></i></div>
             <h3>Application Tracker</h3>
             <p>Track all your job applications — company, role, date, and status — in one organized dashboard.</p>
             <ul>
@@ -769,7 +770,7 @@ if page == "home":
     with c4:
         st.markdown("""
         <div class="feature-card">
-            <div class="card-icon">📁</div>
+            <div class="card-icon"><i class="bi bi-folder2-open"></i></div>
             <h3>Resume History</h3>
             <p>Browse all your previously generated and optimized resumes with timestamps and quick access.</p>
             <ul>
@@ -791,7 +792,7 @@ elif page == "optimize":
     st.title("Optimize Resume")
     st.markdown('<p class="page-subtitle">Upload your resume and paste the target job description. AI will analyze, optimize, and tailor it for ATS.</p>', unsafe_allow_html=True)
 
-    _section_header("📤", "Upload & Input", "Provide your resume and target job description")
+    _section_header("bi-cloud-upload", "Upload & Input", "Provide your resume and target job description")
     c1, c2 = st.columns(2, gap="large")
     with c1:
         uploaded = st.file_uploader("Upload Your Resume", type=["pdf", "docx"], help="PDF or DOCX, max 10 MB")
@@ -809,7 +810,7 @@ elif page == "optimize":
 
     st.divider()
 
-    if st.button("🚀 Optimize Resume", use_container_width=True, type="primary"):
+    if st.button("Optimize Resume", use_container_width=True, type="primary"):
         if not _api_ok:
             st.error("Ollama is not running. Start it with `ollama serve`.")
         elif not uploaded:
@@ -855,7 +856,7 @@ elif page == "optimize":
     # ── Display results from session state (persists across reruns) ──
     if st.session_state.match_result:
         match = st.session_state.match_result
-        _section_header("📊", "Skill Match Analysis", "How well your resume matches the job")
+        _section_header("bi-bar-chart-line", "Skill Match Analysis", "How well your resume matches the job")
         score = match.score
         s1, s2, s3 = st.columns(3, gap="medium")
         with s1:
@@ -871,21 +872,21 @@ elif page == "optimize":
             st.metric("Missing Skills", len(match.missing))
 
         if match.matched:
-            with st.expander(f"✅ Matched Skills ({len(match.matched)})", expanded=True):
+            with st.expander(f"Matched Skills ({len(match.matched)})", expanded=True):
                 pills = " ".join(f'<span class="skill-pill">{s}</span>' for s in match.matched)
                 st.markdown(pills, unsafe_allow_html=True)
         if match.missing:
-            with st.expander(f"⚠️ Missing Skills ({len(match.missing)})", expanded=True):
+            with st.expander(f"Missing Skills ({len(match.missing)})", expanded=True):
                 pills = " ".join(f'<span class="skill-pill missing">{s}</span>' for s in match.missing)
                 st.markdown(pills, unsafe_allow_html=True)
         if match.category_breakdown:
-            with st.expander("📊 Category Breakdown"):
+            with st.expander("Category Breakdown"):
                 chart = {c: i["score"] for c, i in match.category_breakdown.items()}
                 st.bar_chart(chart, height=250)
 
     if st.session_state.optimized_resume:
         optimized = st.session_state.optimized_resume
-        _section_header("👁️", "Resume Preview", "Review your optimized resume")
+        _section_header("bi-eye", "Resume Preview", "Review your optimized resume")
         if st.session_state.opt_pdf_bytes:
             st.markdown(get_pdf_preview_html(st.session_state.opt_pdf_bytes), unsafe_allow_html=True)
         else:
@@ -895,20 +896,20 @@ elif page == "optimize":
         d1, d2, d3 = st.columns(3, gap="medium")
         with d1:
             if st.session_state.opt_pdf_bytes:
-                st.download_button("📥 Download PDF", st.session_state.opt_pdf_bytes, file_name=f"optimized_resume_{datetime.now():%Y%m%d_%H%M}.pdf", mime="application/pdf", use_container_width=True)
+                st.download_button("Download PDF", st.session_state.opt_pdf_bytes, file_name=f"optimized_resume_{datetime.now():%Y%m%d_%H%M}.pdf", mime="application/pdf", use_container_width=True)
         with d2:
-            st.download_button("📄 Download TXT", optimized, file_name=f"optimized_resume_{datetime.now():%Y%m%d_%H%M}.txt", use_container_width=True)
+            st.download_button("Download TXT", optimized, file_name=f"optimized_resume_{datetime.now():%Y%m%d_%H%M}.txt", use_container_width=True)
         with d3:
-            st.success("✅ Saved to history.")
+            st.success("Saved to history.")
 
         if st.session_state.opt_suggestions:
-            with st.expander("💡 AI Improvement Suggestions"):
+            with st.expander("AI Improvement Suggestions"):
                 st.markdown(st.session_state.opt_suggestions)
 
         if st.session_state.cover_letter:
-            _section_header("✉️", "Cover Letter")
+            _section_header("bi-envelope", "Cover Letter")
             _show_cover_letter(st.session_state.cover_letter)
-            st.download_button("📥 Download Cover Letter", st.session_state.cover_letter, file_name=f"cover_letter_{datetime.now():%Y%m%d_%H%M}.txt", use_container_width=True)
+            st.download_button("Download Cover Letter", st.session_state.cover_letter, file_name=f"cover_letter_{datetime.now():%Y%m%d_%H%M}.txt", use_container_width=True)
 
 
 # ════════════════════════════════════════════════════════════════════════════════
@@ -919,7 +920,7 @@ elif page == "build":
     st.title("Build from Scratch")
     st.markdown('<p class="page-subtitle">Fill in your details and AI will craft a professional, ATS-friendly resume.</p>', unsafe_allow_html=True)
 
-    _section_header("👤", "Personal Information", "Your basic contact details")
+    _section_header("bi-person", "Personal Information", "Your basic contact details")
     c1, c2 = st.columns(2, gap="large")
     with c1:
         name = st.text_input("Full Name *", placeholder="e.g. John Doe")
@@ -931,7 +932,7 @@ elif page == "build":
         github = st.text_input("GitHub URL", placeholder="e.g. github.com/johndoe")
 
     st.divider()
-    _section_header("🎓", "Education", "Academic qualifications")
+    _section_header("bi-mortarboard", "Education", "Academic qualifications")
     c1, c2 = st.columns(2, gap="large")
     with c1:
         degree = st.text_input("Degree / Qualification *", placeholder="e.g. B.Tech in CSE")
@@ -941,23 +942,23 @@ elif page == "build":
         cgpa = st.text_input("CGPA / Percentage", placeholder="e.g. 8.5 / 85%")
 
     st.divider()
-    _section_header("💼", "Experience", "Optional — Work experience & internships")
+    _section_header("bi-briefcase", "Experience", "Optional — Work experience & internships")
     experience = st.text_area("Work experience / internships", height=120, placeholder="e.g. Internship at XYZ as Python Developer (Jun 2024 - Aug 2024).\nWorked on building REST APIs...")
 
     st.divider()
-    _section_header("🛠️", "Projects", "Describe your key projects")
+    _section_header("bi-code-slash", "Projects", "Describe your key projects")
     projects = st.text_area("Describe your projects", height=120, placeholder="e.g.\nProject: Chat App | Tech: Python, Flask, Socket.IO\nDescription: Built a real-time messaging app...")
 
     st.divider()
-    _section_header("⚡", "Skills", "Technical and soft skills")
+    _section_header("bi-lightning", "Skills", "Technical and soft skills")
     skills = st.text_area("List your skills (comma separated)", placeholder="e.g. Python, Machine Learning, SQL, React, Git, Docker...")
 
     st.divider()
-    _section_header("🏆", "Achievements & Certifications", "Optional — Awards, certs, extras")
+    _section_header("bi-trophy", "Achievements & Certifications", "Optional — Awards, certs, extras")
     achievements = st.text_area("Certifications / Achievements / Extra-curriculars", placeholder="e.g. AWS Certified Cloud Practitioner, Winner of XYZ Hackathon...")
 
     st.divider()
-    _section_header("🎯", "Target Job Description", "Optional but recommended for tailored results")
+    _section_header("bi-bullseye", "Target Job Description", "Optional but recommended for tailored results")
     jd_scratch = st.text_area("Job Description", height=150, placeholder="Paste the JD to tailor your resume to a specific role...", label_visibility="collapsed")
     if jd_scratch:
         st.caption(f"{len(jd_scratch):,} characters")
@@ -971,7 +972,7 @@ elif page == "build":
 
     st.divider()
 
-    if st.button("🚀 Generate My Resume", use_container_width=True, type="primary"):
+    if st.button("Generate My Resume", use_container_width=True, type="primary"):
         if not _api_ok:
             st.error("Ollama is not running. Start it with `ollama serve`.")
         elif not name or not email or not degree or not college:
@@ -1013,7 +1014,7 @@ elif page == "build":
     # ── Display results from session state (persists across reruns) ──
     if st.session_state.generated_resume:
         resume = st.session_state.generated_resume
-        _section_header("👁️", "Resume Preview", "Your AI-generated resume")
+        _section_header("bi-eye", "Resume Preview", "Your AI-generated resume")
         if st.session_state.gen_pdf_bytes:
             st.markdown(get_pdf_preview_html(st.session_state.gen_pdf_bytes), unsafe_allow_html=True)
         else:
@@ -1023,20 +1024,20 @@ elif page == "build":
         d1, d2, d3 = st.columns(3, gap="medium")
         with d1:
             if st.session_state.gen_pdf_bytes:
-                st.download_button("📥 Download PDF", st.session_state.gen_pdf_bytes, file_name=f"resume_{datetime.now():%Y%m%d_%H%M}.pdf", mime="application/pdf", use_container_width=True)
+                st.download_button("Download PDF", st.session_state.gen_pdf_bytes, file_name=f"resume_{datetime.now():%Y%m%d_%H%M}.pdf", mime="application/pdf", use_container_width=True)
         with d2:
-            st.download_button("📄 Download TXT", resume, file_name=f"resume_{datetime.now():%Y%m%d_%H%M}.txt", use_container_width=True)
+            st.download_button("Download TXT", resume, file_name=f"resume_{datetime.now():%Y%m%d_%H%M}.txt", use_container_width=True)
         with d3:
-            st.success("✅ Saved to history.")
+            st.success("Saved to history.")
 
         if st.session_state.gen_suggestions:
-            with st.expander("💡 AI Improvement Suggestions"):
+            with st.expander("AI Improvement Suggestions"):
                 st.markdown(st.session_state.gen_suggestions)
 
         if st.session_state.cover_letter:
-            _section_header("✉️", "Cover Letter")
+            _section_header("bi-envelope", "Cover Letter")
             _show_cover_letter(st.session_state.cover_letter)
-            st.download_button("📥 Download Cover Letter", st.session_state.cover_letter, file_name=f"cover_letter_{datetime.now():%Y%m%d_%H%M}.txt", use_container_width=True)
+            st.download_button("Download Cover Letter", st.session_state.cover_letter, file_name=f"cover_letter_{datetime.now():%Y%m%d_%H%M}.txt", use_container_width=True)
 
 
 # ════════════════════════════════════════════════════════════════════════════════
@@ -1048,7 +1049,7 @@ elif page == "tracker":
     st.markdown('<p class="page-subtitle">Track every job application — company, role, status, and dates — all in one place.</p>', unsafe_allow_html=True)
 
     with st.form("add_app", clear_on_submit=True):
-        _section_header("➕", "Add New Application", "Log a new job application")
+        _section_header("bi-plus-circle", "Add New Application", "Log a new job application")
         c1, c2, c3 = st.columns(3, gap="large")
         with c1:
             company = st.text_input("Company Name *", placeholder="e.g. Google")
@@ -1075,7 +1076,7 @@ elif page == "tracker":
     apps = load_applications()
 
     if not apps.empty:
-        _section_header("📈", "Overview", "Your application statistics at a glance")
+        _section_header("bi-graph-up", "Overview", "Your application statistics at a glance")
         m1, m2, m3, m4 = st.columns(4, gap="medium")
         with m1: st.metric("Total", len(apps))
         with m2: st.metric("Applied", len(apps[apps["status"] == "Applied"]) if "status" in apps.columns else 0)
@@ -1083,7 +1084,7 @@ elif page == "tracker":
         with m4: st.metric("Offers", len(apps[apps["status"] == "Offer Received"]) if "status" in apps.columns else 0)
 
         if "status" in apps.columns:
-            with st.expander("📊 Status Distribution Chart"):
+            with st.expander("Status Distribution Chart"):
                 try:
                     import plotly.express as px
                     sc = apps["status"].value_counts().reset_index()
@@ -1099,11 +1100,11 @@ elif page == "tracker":
                     st.warning("Install `plotly` for chart visualization: `pip install plotly`")
 
         st.divider()
-        _section_header("🔍", "Filter Applications", "Search and filter your applications")
+        _section_header("bi-funnel", "Filter Applications", "Search and filter your applications")
         f1, f2, f3 = st.columns([2, 2, 1], gap="large")
         with f1: filt = st.selectbox("Filter by Status", ["All"] + APPLICATION_STATUSES, key="filt")
         with f2: search = st.text_input("Search Company / Role", placeholder="Type to search...", key="srch")
-        with f3: st.download_button("📥 Export CSV", apps.to_csv(index=False).encode("utf-8"), file_name=f"applications_{datetime.now():%Y%m%d}.csv", mime="text/csv", use_container_width=True)
+        with f3: st.download_button("Export CSV", apps.to_csv(index=False).encode("utf-8"), file_name=f"applications_{datetime.now():%Y%m%d}.csv", mime="text/csv", use_container_width=True)
 
         filtered = apps.copy()
         if filt != "All" and "status" in filtered.columns:
@@ -1123,16 +1124,16 @@ elif page == "tracker":
                 co = r.get("company", "Unknown"); ro = r.get("role", "Unknown")
                 cs = r.get("status", "Applied"); lk = r.get("link", "")
                 nt = r.get("notes", ""); dt = str(r.get("date", ""))
-                emoji = STATUS_COLORS.get(cs, "⚪"); css_cls = STATUS_CSS_CLASS.get(cs, "status-applied")
+                emoji = STATUS_COLORS.get(cs, "●"); css_cls = STATUS_CSS_CLASS.get(cs, "status-applied")
 
                 with st.container(border=True):
                     top1, top2 = st.columns([4, 1])
                     with top1:
                         st.markdown(f"**{co}** — {ro}")
-                        info_parts = [f"📅 {dt}"]
-                        if lk and lk.strip(): info_parts.append(f"[🔗 Link]({lk})")
+                        info_parts = [f"{dt}"]
+                        if lk and lk.strip(): info_parts.append(f"[Link]({lk})")
                         st.caption(" · ".join(info_parts))
-                        if nt and nt.strip(): st.caption(f"📝 {nt}")
+                        if nt and nt.strip(): st.caption(nt)
                     with top2:
                         st.markdown(f'<div class="status-badge {css_cls}">{emoji} {cs}</div>', unsafe_allow_html=True)
 
@@ -1182,11 +1183,11 @@ elif page == "history":
             mode = "Generated" if entry.get("mode") == "generated" else "Optimized"
             ts = entry.get("timestamp", "Unknown")
             cc = entry.get("char_count", len(entry.get("content", "")))
-            mode_icon = "📝" if entry.get("mode") == "generated" else "🔧"
-            with st.expander(f"{mode_icon} {mode} — {ts} ({cc:,} chars)", expanded=(i == 0)):
+            mode_icon = "bi-pencil-square" if entry.get("mode") == "generated" else "bi-wrench-adjustable"
+            with st.expander(f"{mode} — {ts} ({cc:,} chars)", expanded=(i == 0)):
                 content = entry.get("content", "")
                 _show_resume(content)
-                st.download_button("📥 Download TXT", content, file_name=f"resume_{entry.get('mode', 'saved')}_{entry.get('id', i)}.txt", key=f"dl_{entry.get('id', i)}", use_container_width=True)
+                st.download_button("Download TXT", content, file_name=f"resume_{entry.get('mode', 'saved')}_{entry.get('id', i)}.txt", key=f"dl_{entry.get('id', i)}", use_container_width=True)
     else:
         st.info("No resumes saved yet. Generate or optimize a resume to see it here.")
 
