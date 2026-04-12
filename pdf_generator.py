@@ -473,6 +473,7 @@ def _latex_to_pdf(latex_source: str) -> bytes:
         try:
             subprocess.run(
                 ["pdflatex", "-interaction=nonstopmode",
+                 "--disable-installer",
                  "-output-directory", tmpdir, tex_path],
                 capture_output=True, text=True, timeout=30, cwd=tmpdir,
             )
