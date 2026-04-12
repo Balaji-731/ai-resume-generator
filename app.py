@@ -30,8 +30,7 @@ logger = get_logger(__name__)
 
 st.set_page_config(
     page_title="AI Resume Generator",
-    page_icon="📄",
-    layout="wide",
+        layout="wide",
     initial_sidebar_state="expanded",
 )
 
