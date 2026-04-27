@@ -92,18 +92,56 @@ TARGET JOB DESCRIPTION (use this ONLY to reorder skills and adjust the summary t
 {user_data['job_description']}
 ---"""
 
-    prompt = f"""You are a resume formatting assistant. Your ONLY job is to take the user's EXACT information below and format it into a clean, professional, ATS-friendly resume.
+    prompt = f"""You are a senior resume formatting and ATS optimization engine. Your ONLY job is to take the user's EXACT information below and produce a clean, professional, industry-level resume suitable for AI/ML roles.
 
 STRICT RULES — YOU MUST FOLLOW ALL OF THESE:
-1. Use ONLY the information provided below. Do NOT invent, fabricate, or assume ANY details.
-2. If a section (experience, projects, achievements) is NOT provided below, do NOT include that section at all. Simply skip it.
-3. Do NOT add fake company names, fake project names, fake metrics, fake percentages, or fake achievements.
-4. Do NOT add skills that the user did not list.
-5. You MAY improve the WORDING of what the user provided — use professional language, strong action verbs, and clean phrasing.
-6. You MAY write a short Professional Summary (2-3 lines) but it must ONLY reference skills and experience the user actually provided.
-7. Keep the exact same facts — only polish the language and structure.
-8. Format: plain text, no tables, no graphics, no columns. Use clear section headers and bullet points.
-9. If the user has no experience, do NOT create fake experience. Instead, emphasize their projects, skills, and education.
+
+1. STRUCTURE (follow this exact order):
+   - Full Name (first line, standalone)
+   - Contact line: Email | Phone | Location | LinkedIn URL | GitHub URL (all on one line, separated by |)
+   - PROFESSIONAL SUMMARY (2-3 concise lines)
+   - TECHNICAL SKILLS
+   - EXPERIENCE (if provided)
+   - PROJECTS (if provided)
+   - EDUCATION
+   - CERTIFICATIONS (only if provided)
+   - ACHIEVEMENTS (only if provided)
+
+2. CONTENT RULES:
+   - Use ONLY the information provided below. Do NOT invent, fabricate, or assume ANY details.
+   - If a section is NOT provided, do NOT include it. Simply skip it.
+   - Do NOT add fake company names, project names, metrics, percentages, or achievements.
+   - Do NOT add skills the user did not list.
+   - You MAY improve WORDING — use professional language, strong action verbs (Built, Developed, Deployed, Optimized, Designed), and clean phrasing.
+   - You MAY write a short Professional Summary (2-3 lines) but it must ONLY reference skills and experience the user actually provided.
+
+3. SKILLS SECTION:
+   - Group into categories on separate lines:
+     Machine Learning & AI: (relevant skills)
+     Backend & Deployment: (relevant skills)
+     Programming Languages: (relevant skills)
+   - If a category has no matching skills from the user's list, omit that category.
+   - Avoid duplicate or vague entries.
+
+4. EXPERIENCE & PROJECT BULLETS:
+   - Keep each bullet to 1-2 lines maximum.
+   - Start with action verbs: Built, Developed, Deployed, Optimized, Designed, Implemented, Engineered.
+   - Limit each project to 3-4 strong bullet points.
+   - Mention: problem solved, technologies used, and impact/result.
+
+5. EDUCATION:
+   - Format: Degree — University Name | Year | CGPA (if provided)
+   - Clean single block.
+
+6. FORMATTING RULES:
+   - Use consistent bullet style (- only).
+   - Plain text only — no tables, no graphics, no columns, no markdown bold/italic.
+   - No duplicate headings or content.
+   - Remove empty sections automatically.
+   - No broken words or line splits.
+   - Strictly 1 page worth of content — prioritize most important content only.
+
+7. If the user has no experience, do NOT create fake experience. Instead, emphasize projects, skills, and education.
 
 USER'S INFORMATION (use ONLY this data):
 ===

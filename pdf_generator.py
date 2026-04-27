@@ -11,8 +11,8 @@ Templates (available in both engines):
   - Developer   : Strong hierarchy with accent bars, technical emphasis
 
 Section render order (enforced):
-  header → summary → education → experience → projects →
-  skills → certifications → achievements/other
+  header → summary → skills → experience → projects →
+  education → certifications → achievements/other
 
 Design system:
   Spacing  : 4pt tight · 8pt default · 12pt comfortable · 16pt spacious
@@ -67,26 +67,29 @@ SECTION_KEYWORDS = {
         "employment", "internships", "experience / internships",
         "experience/internships",
     ],
-    "education": [
-        "education", "academic background", "qualifications",
-        "academic qualifications",
-    ],
     "projects": [
         "projects", "personal projects", "key projects",
         "academic projects",
     ],
+    "education": [
+        "education", "academic background", "qualifications",
+        "academic qualifications",
+    ],
     "certifications": [
-        "certifications", "achievements", "awards",
-        "certifications & achievements", "achievements & certifications",
-        "honors", "certifications and achievements",
+        "certifications", "certificates", "professional certifications",
+        "certifications & achievements",
+    ],
+    "achievements": [
+        "achievements", "awards", "honors",
+        "achievements & certifications", "accomplishments",
     ],
 }
 
 SIDEBAR_TYPES = {"contact", "skills", "education", "certifications"}
 
 SECTION_RENDER_ORDER = [
-    "summary", "education", "experience", "projects",
-    "skills", "certifications", "other",
+    "summary", "skills", "experience", "projects",
+    "education", "certifications", "achievements", "other",
 ]
 
 
@@ -95,11 +98,11 @@ SECTION_RENDER_ORDER = [
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def _is_bullet(line: str) -> bool:
-    return bool(re.match(r"^\s*[-*>]\s", line))
+    return bool(re.match(r"^\s*[-*>•]\s", line))
 
 
 def _clean_bullet(line: str) -> str:
-    return re.sub(r"^\s*[-*>]\s*", "", line)
+    return re.sub(r"^\s*[-*>•]\s*", "", line)
 
 
 def _is_subheader(line: str) -> bool:
@@ -200,10 +203,16 @@ def _split_entry_header(text: str):
 
 
 def _order_sections(sections):
-    """Reorder non-contact sections into the canonical resume order."""
+    """Reorder non-contact sections into the canonical resume order.
+    Drops empty sections automatically.
+    """
     by_type = {}
     for stype, title, lines in sections:
         if stype == "contact":
+            continue
+        # Skip empty sections
+        content = [l for l in lines if l.strip()]
+        if not content:
             continue
         by_type.setdefault(stype, []).append((stype, title, lines))
     ordered = []
@@ -305,7 +314,7 @@ def _render_body_latex(lines):
 
 _PREAMBLE_ATS_CLASSIC = r"""
 \documentclass[10pt,a4paper]{article}
-\usepackage[top=12mm,bottom=12mm,left=15mm,right=15mm]{geometry}
+\usepackage[top=10mm,bottom=10mm,left=14mm,right=14mm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -315,15 +324,16 @@ _PREAMBLE_ATS_CLASSIC = r"""
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
 
 \titleformat{\section}
-  {\vspace{-4pt}\large\bfseries\scshape\raggedright}
+  {\vspace{-4pt}\normalsize\bfseries\scshape\raggedright}
   {}{0em}
   {}[\titlerule\vspace{-4pt}]
-\titlespacing*{\section}{0pt}{8pt}{4pt}
+\titlespacing*{\section}{0pt}{7pt}{3pt}
 
 \setlist[itemize]{
-  leftmargin=14pt, topsep=2pt, itemsep=1pt,
+  leftmargin=14pt, topsep=1pt, itemsep=0pt,
   parsep=0pt, partopsep=0pt, label=\textbullet
 }
 \hypersetup{colorlinks=false, pdfborder={0 0 0}}
@@ -331,7 +341,7 @@ _PREAMBLE_ATS_CLASSIC = r"""
 
 _PREAMBLE_MODERN = r"""
 \documentclass[10pt,a4paper]{article}
-\usepackage[top=14mm,bottom=14mm,left=16mm,right=16mm]{geometry}
+\usepackage[top=10mm,bottom=10mm,left=14mm,right=14mm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -342,19 +352,20 @@ _PREAMBLE_MODERN = r"""
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
 
 \definecolor{accent}{RGB}{14,165,233}
 \definecolor{heading}{RGB}{15,23,42}
 \definecolor{subtext}{RGB}{100,116,139}
 
 \titleformat{\section}
-  {\vspace{-2pt}\large\bfseries\color{heading}}
+  {\vspace{-2pt}\normalsize\bfseries\color{heading}}
   {}{0em}
   {}[{\color{accent}\titlerule}\vspace{-2pt}]
-\titlespacing*{\section}{0pt}{10pt}{5pt}
+\titlespacing*{\section}{0pt}{8pt}{3pt}
 
 \setlist[itemize]{
-  leftmargin=14pt, topsep=2pt, itemsep=1pt,
+  leftmargin=14pt, topsep=1pt, itemsep=0pt,
   parsep=0pt, partopsep=0pt,
   label={\color{accent}\textbullet}
 }
@@ -363,7 +374,7 @@ _PREAMBLE_MODERN = r"""
 
 _PREAMBLE_DEVELOPER = r"""
 \documentclass[10pt,a4paper]{article}
-\usepackage[top=12mm,bottom=12mm,left=14mm,right=14mm]{geometry}
+\usepackage[top=10mm,bottom=10mm,left=14mm,right=14mm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -374,6 +385,7 @@ _PREAMBLE_DEVELOPER = r"""
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
 
 \definecolor{accent}{RGB}{79,70,229}
 \definecolor{heading}{RGB}{17,24,39}
@@ -383,10 +395,10 @@ _PREAMBLE_DEVELOPER = r"""
   {\vspace{-2pt}\normalsize\bfseries}
   {}{0em}
   {\color{accent}\vrule width 3pt height 10pt depth 2pt\hspace{8pt}\color{heading}}
-\titlespacing*{\section}{0pt}{8pt}{4pt}
+\titlespacing*{\section}{0pt}{7pt}{3pt}
 
 \setlist[itemize]{
-  leftmargin=14pt, topsep=2pt, itemsep=1pt,
+  leftmargin=14pt, topsep=1pt, itemsep=0pt,
   parsep=0pt, partopsep=0pt, label=\textbullet
 }
 \hypersetup{colorlinks=false, pdfborder={0 0 0}}
@@ -402,7 +414,7 @@ def _build_ats_classic_latex(sections):
 
     header = (
         "\\begin{center}\n"
-        f"  {{\\LARGE\\bfseries {name_tex}}} \\\\[3pt]\n"
+        f"  {{\\LARGE\\bfseries {name_tex}}} \\\\[2pt]\n"
         f"  {{\\small {contact_tex}}}\n"
         "\\end{center}\n\\vspace{-2pt}\n"
     )
@@ -423,10 +435,10 @@ def _build_modern_latex(sections):
 
     header = (
         "\\begin{center}\n"
-        f"  {{\\Huge\\bfseries\\color{{heading}} {name_tex}}} \\\\[4pt]\n"
-        "  {\\color{accent}\\rule{50pt}{2.5pt}} \\\\[6pt]\n"
+        f"  {{\\LARGE\\bfseries\\color{{heading}} {name_tex}}} \\\\[3pt]\n"
+        "  {\\color{accent}\\rule{45pt}{2pt}} \\\\[4pt]\n"
         f"  {{\\small\\color{{subtext}} {contact_tex}}}\n"
-        "\\end{center}\n\\vspace{2pt}\n"
+        "\\end{center}\n\\vspace{0pt}\n"
     )
 
     body_parts = []
@@ -445,9 +457,9 @@ def _build_developer_latex(sections):
 
     header = (
         f"{{\\LARGE\\bfseries\\color{{heading}} {name_tex}}} \\\\[2pt]\n"
-        "{\\color{accent}\\rule{50pt}{2.5pt}} \\\\[4pt]\n"
+        "{\\color{accent}\\rule{45pt}{2pt}} \\\\[3pt]\n"
         f"{{\\small\\color{{subtext}} {contact_tex}}}\n"
-        "\\vspace{6pt}\n"
+        "\\vspace{4pt}\n"
     )
 
     body_parts = []
@@ -550,66 +562,61 @@ def _render_body_html(lines):
     return "\n".join(parts)
 
 
+# ── HTML/CSS Templates ───────────────────────────────────────────────────────
+
 _CSS_ATS = """
-@page{size:A4;margin:14mm 18mm}*{margin:0;padding:0}
-body{font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;line-height:1.50;color:#2d2d2d}
-.name{font-size:22pt;font-weight:bold;text-align:center;color:#111;margin-bottom:4px;letter-spacing:.5px}
-.contact-line{text-align:center;font-size:9pt;color:#555;margin-bottom:2px}
-.header-rule{border:none;border-top:1.5px solid #222;margin:8px 0 12px}
-.section{margin-bottom:4px}
-.section-title{font-size:10.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:1.5px;color:#111;border-bottom:1.2px solid #444;padding-bottom:3px;margin-top:12px;margin-bottom:6px}
-.entry-row{width:100%;border:none;margin-bottom:1px}.entry-row td{border:none;padding:1px 0}
-.entry-left{font-weight:bold;font-size:10pt;color:#1a1a1a;text-align:left}
-.entry-right{font-size:9pt;color:#666;text-align:right;white-space:nowrap}
-.entry-title{font-weight:bold;font-size:10pt;color:#1a1a1a;margin-bottom:1px}
-.body-text{font-size:9.5pt;color:#333;line-height:1.50;margin-bottom:2px}
-ul.bullets{margin:2px 0 4px 18px;padding:0}
-ul.bullets li{font-size:9.5pt;color:#333;line-height:1.50;margin-bottom:1px}
+@page{size:A4;margin:10mm 14mm}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;line-height:1.45;color:#2d2d2d}
+.name{font-size:24pt;font-weight:bold;text-align:center;color:#111;margin-bottom:3px;letter-spacing:.5px}
+.contact-line{text-align:center;font-size:8.5pt;color:#555;margin-bottom:2px;line-height:1.4}
+.header-rule{border:none;border-top:1.5px solid #222;margin:6px 0 8px}
+.section{margin-bottom:2px}
+.section-title{font-size:10pt;font-weight:bold;text-transform:uppercase;letter-spacing:1.5px;color:#111;border-bottom:1.2px solid #444;padding-bottom:2px;margin-top:8px;margin-bottom:4px}
+.entry-row{width:100%;border:none;margin-bottom:0px}.entry-row td{border:none;padding:1px 0}
+.entry-left{font-weight:bold;font-size:9.5pt;color:#1a1a1a;text-align:left}
+.entry-right{font-size:8.5pt;color:#666;text-align:right;white-space:nowrap}
+.entry-title{font-weight:bold;font-size:9.5pt;color:#1a1a1a;margin-bottom:0px}
+.body-text{font-size:9pt;color:#333;line-height:1.40;margin-bottom:1px}
+ul.bullets{margin:1px 0 3px 16px;padding:0}
+ul.bullets li{font-size:9pt;color:#333;line-height:1.40;margin-bottom:0.5px}
 """
 
 _CSS_MODERN = """
-@page{size:A4;margin:0}*{margin:0;padding:0}
-body{font-family:Helvetica,Arial,sans-serif;font-size:9pt;line-height:1.45;color:#334155}
-.page-layout{width:100%;border-collapse:collapse}.page-layout td{border:none}
-.sidebar{width:33%;background-color:#1e293b;vertical-align:top;padding:22mm 12mm 22mm 16mm}
-.sidebar .sidebar-name{font-size:14pt;font-weight:bold;color:#f1f5f9;margin-bottom:16px}
-.sidebar .section-title{font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:1.5px;color:#38bdf8;border-bottom:1px solid #38bdf8;padding-bottom:3px;margin-top:14px;margin-bottom:6px}
-.sidebar .contact-item{font-size:8.5pt;color:#cbd5e1;margin-bottom:3px;line-height:1.55}
-.sidebar .body-text,.sidebar ul.bullets li{font-size:8.5pt;color:#cbd5e1;line-height:1.55;margin-bottom:1px}
-.sidebar .entry-title{font-weight:bold;font-size:9pt;color:#e2e8f0;margin-bottom:1px}
-.sidebar .entry-row{width:100%;border:none}.sidebar .entry-row td{border:none;padding:1px 0}
-.sidebar .entry-left{font-weight:bold;font-size:8.5pt;color:#e2e8f0;text-align:left}
-.sidebar .entry-right{font-size:8pt;color:#94a3b8;text-align:right;white-space:nowrap}
-.sidebar ul.bullets{margin:1px 0 4px 12px;padding:0}
-.main-area{vertical-align:top;padding:22mm 20mm 22mm 16mm}
-.main-area .main-name{font-size:28pt;font-weight:bold;color:#0f172a;margin-bottom:6px}
-.main-area .accent-bar{width:50px;height:3px;background-color:#0ea5e9;margin-bottom:16px}
-.main-area .section-title{font-size:10.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:1px;color:#0f172a;border-bottom:1.5px solid #0ea5e9;padding-bottom:3px;margin-top:14px;margin-bottom:6px}
-.main-area .entry-row{width:100%;border:none}.main-area .entry-row td{border:none;padding:1px 0}
-.main-area .entry-left{font-weight:bold;font-size:10pt;color:#0f172a;text-align:left}
-.main-area .entry-right{font-size:9pt;color:#64748b;text-align:right;white-space:nowrap}
-.main-area .entry-title{font-weight:bold;font-size:10pt;color:#0f172a;margin-bottom:1px}
-.main-area .body-text{font-size:9.5pt;color:#334155;line-height:1.50;margin-bottom:2px}
-.main-area ul.bullets{margin:2px 0 4px 16px;padding:0}
-.main-area ul.bullets li{font-size:9.5pt;color:#334155;line-height:1.50;margin-bottom:1px}
+@page{size:A4;margin:10mm 14mm}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Helvetica,Arial,sans-serif;font-size:9pt;line-height:1.40;color:#334155}
+.name{font-size:26pt;font-weight:bold;text-align:center;color:#0f172a;margin-bottom:4px;letter-spacing:.3px}
+.accent-bar{width:45px;height:2.5px;background-color:#0ea5e9;margin:0 auto 6px auto}
+.contact-line{text-align:center;font-size:8.5pt;color:#64748b;margin-bottom:2px;line-height:1.4}
+.section{margin-bottom:2px}
+.section-title{font-size:10pt;font-weight:bold;text-transform:uppercase;letter-spacing:1px;color:#0f172a;border-bottom:1.5px solid #0ea5e9;padding-bottom:2px;margin-top:8px;margin-bottom:4px}
+.entry-row{width:100%;border:none;margin-bottom:0px}.entry-row td{border:none;padding:1px 0}
+.entry-left{font-weight:bold;font-size:9.5pt;color:#0f172a;text-align:left}
+.entry-right{font-size:8.5pt;color:#64748b;text-align:right;white-space:nowrap}
+.entry-title{font-weight:bold;font-size:9.5pt;color:#0f172a;margin-bottom:0px}
+.body-text{font-size:9pt;color:#334155;line-height:1.40;margin-bottom:1px}
+ul.bullets{margin:1px 0 3px 16px;padding:0}
+ul.bullets li{font-size:9pt;color:#334155;line-height:1.40;margin-bottom:0.5px}
 """
 
 _CSS_DEV = """
-@page{size:A4;margin:14mm 16mm}*{margin:0;padding:0}
-body{font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;line-height:1.50;color:#374151}
-.header-block{margin-bottom:14px}
-.name{font-size:26pt;font-weight:bold;color:#111827;margin-bottom:4px}
-.accent-underline{width:55px;height:3px;background-color:#4f46e5;margin-bottom:6px}
-.contact-line{font-size:8.5pt;color:#6b7280;margin-bottom:1px}
-.section{margin-bottom:4px}
-.section-title{font-size:10.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:1px;color:#111827;padding-left:12px;border-left:3px solid #4f46e5;margin-top:12px;margin-bottom:6px}
-.entry-row{width:100%;border:none;margin-bottom:1px}.entry-row td{border:none;padding:1px 0}
-.entry-left{font-weight:bold;font-size:10pt;color:#111827;text-align:left}
-.entry-right{font-size:9pt;color:#6b7280;text-align:right;white-space:nowrap}
-.entry-title{font-weight:bold;font-size:10pt;color:#111827;margin-bottom:1px}
-.body-text{font-size:9.5pt;color:#374151;line-height:1.50;margin-bottom:2px}
-ul.bullets{margin:2px 0 4px 18px;padding:0}
-ul.bullets li{font-size:9.5pt;color:#374151;line-height:1.50;margin-bottom:1px}
+@page{size:A4;margin:10mm 14mm}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;line-height:1.45;color:#374151}
+.header-block{margin-bottom:8px}
+.name{font-size:26pt;font-weight:bold;color:#111827;margin-bottom:3px}
+.accent-underline{width:50px;height:2.5px;background-color:#4f46e5;margin-bottom:4px}
+.contact-line{font-size:8.5pt;color:#6b7280;margin-bottom:1px;line-height:1.4}
+.section{margin-bottom:2px}
+.section-title{font-size:10pt;font-weight:bold;text-transform:uppercase;letter-spacing:1px;color:#111827;padding-left:10px;border-left:3px solid #4f46e5;margin-top:8px;margin-bottom:4px}
+.entry-row{width:100%;border:none;margin-bottom:0px}.entry-row td{border:none;padding:1px 0}
+.entry-left{font-weight:bold;font-size:9.5pt;color:#111827;text-align:left}
+.entry-right{font-size:8.5pt;color:#6b7280;text-align:right;white-space:nowrap}
+.entry-title{font-weight:bold;font-size:9.5pt;color:#111827;margin-bottom:0px}
+.body-text{font-size:9pt;color:#374151;line-height:1.40;margin-bottom:1px}
+ul.bullets{margin:1px 0 3px 16px;padding:0}
+ul.bullets li{font-size:9pt;color:#374151;line-height:1.40;margin-bottom:0.5px}
 """
 
 
@@ -636,29 +643,20 @@ def _build_ats_classic_html(sections):
 def _build_modern_html(sections):
     name, contacts = _extract_contact(sections)
     name_h = _sanitize_html(name) if name else "Resume"
-    sidebar_secs = [(s, t, l) for s, t, l in sections if s in SIDEBAR_TYPES]
-    main_secs = [(s, t, l) for s, t, l in sections if s not in SIDEBAR_TYPES]
-    sb = []
-    if contacts:
-        sb.append('<div class="section-title">CONTACT</div>')
-        for c in contacts:
-            sb.append(f'<div class="contact-item">{_sanitize_html(c)}</div>')
-    for stype, title, lines in sidebar_secs:
-        if stype == "contact":
-            continue
-        sb.append(f'<div class="section-title">{html_escape(_clean_title(title).upper())}</div>')
-        sb.append(_render_body_html(lines))
-    mn = []
-    for stype, title, lines in _order_sections(main_secs):
-        mn.append(f'<div class="section-title">{html_escape(_clean_title(title).upper())}</div>')
-        mn.append(_render_body_html(lines))
+    contact_h = " &middot; ".join(_sanitize_html(c) for c in contacts)
+    body = []
+    for stype, title, lines in _order_sections(sections):
+        ct = html_escape(_clean_title(title).upper())
+        body.append(f'<div class="section"><div class="section-title">{ct}</div>')
+        body.append(_render_body_html(lines))
+        body.append("</div>")
     return (
         f'<!DOCTYPE html><html><head><meta charset="UTF-8"><style>{_CSS_MODERN}</style></head><body>'
-        f'<table class="page-layout"><tr>'
-        f'<td class="sidebar"><div class="sidebar-name">{name_h}</div>' + "\n".join(sb) + "</td>"
-        f'<td class="main-area"><div class="main-name">{name_h}</div>'
-        f'<div class="accent-bar"></div>' + "\n".join(mn) + "</td>"
-        f"</tr></table></body></html>"
+        f'<div class="name">{name_h}</div>'
+        f'<div class="accent-bar"></div>'
+        f'<div class="contact-line">{contact_h}</div>'
+        + "\n".join(body)
+        + "</body></html>"
     )
 
 
