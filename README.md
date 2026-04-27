@@ -2,7 +2,7 @@
 
 A professional-grade, AI-powered resume optimization and generation platform — built with **Streamlit** and **Ollama (Local LLM)**. Designed for AI/ML roles with ATS-optimized, recruiter-ready PDF output.
 
-## GitHub Link: https://github.com/Balaji-731/ai-resume-generator
+GitHub Link: https://github.com/Balaji-731/ai-resume-generator
 ---
 
 ## Project Structure
