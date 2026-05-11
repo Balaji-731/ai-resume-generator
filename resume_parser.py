@@ -239,8 +239,13 @@ def parse_resume(file, filename: str) -> str:
 
     if ext == "pdf":
         return extract_text_from_pdf(file)
-    elif ext in ("docx", "doc"):
+    elif ext == "docx":
         return extract_text_from_docx(file)
+    elif ext == "doc":
+        raise ResumeParseError(
+            "Legacy .doc format is not supported. "
+            "Please save your resume as .docx (Word 2007+) or .pdf and re-upload."
+        )
     else:
         raise ResumeParseError(
             f"Unsupported file format: .{ext}. "

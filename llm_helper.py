@@ -99,19 +99,20 @@ def call_llm(prompt: str, temperature: float = None) -> str:
 
             if response.status_code != 200:
                 error_detail = response.text[:200] if response.text else "No details"
-                raise LLMError(f"Ollama returned status {response.status_code}: {error_detail}")
+                last_error = f"Ollama returned status {response.status_code}: {error_detail}"
+                logger.warning(f"Attempt {attempt} failed: HTTP {response.status_code}")
+            else:
+                data = response.json()
+                text = data.get("response", "").strip()
 
-            data = response.json()
-            text = data.get("response", "").strip()
+                if not text:
+                    raise LLMError("Empty response received from Ollama.")
 
-            if not text:
-                raise LLMError("Empty response received from Ollama.")
+                if len(text) < 10:
+                    raise LLMError("Response too short — likely an error.")
 
-            if len(text) < 10:
-                raise LLMError("Response too short — likely an error.")
-
-            logger.info(f"Ollama call successful (response: {len(text)} chars)")
-            return text
+                logger.info(f"Ollama call successful (response: {len(text)} chars)")
+                return text
 
         except LLMError:
             raise

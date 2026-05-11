@@ -138,8 +138,10 @@ def load_applications(user_id: str = None) -> pd.DataFrame:
     Returns:
         DataFrame with application data, or empty DataFrame if no data.
     """
+    _EMPTY_COLUMNS = ["id"] + APPLICATION_FIELDS
+
     if not user_id:
-        return pd.DataFrame(columns=APPLICATION_FIELDS)
+        return pd.DataFrame(columns=_EMPTY_COLUMNS)
 
     try:
         supabase = get_supabase()
@@ -156,11 +158,11 @@ def load_applications(user_id: str = None) -> pd.DataFrame:
             logger.info(f"Loaded {len(df)} application(s) for user {user_id}")
             return df
         else:
-            return pd.DataFrame(columns=APPLICATION_FIELDS)
+            return pd.DataFrame(columns=_EMPTY_COLUMNS)
 
     except Exception as e:
         logger.error(f"Failed to load applications: {e}")
-        return pd.DataFrame(columns=APPLICATION_FIELDS)
+        return pd.DataFrame(columns=_EMPTY_COLUMNS)
 
 
 def update_application_status(app_id: int, new_status: str) -> bool:

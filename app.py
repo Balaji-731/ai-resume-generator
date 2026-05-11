@@ -31,7 +31,8 @@ logger = get_logger(__name__)
 
 st.set_page_config(
     page_title="AI Resume Generator",
-        layout="wide",
+    page_icon="📄",
+    layout="wide",
     initial_sidebar_state="expanded",
 )
 
@@ -893,6 +894,11 @@ if not is_authenticated():
 # ════════════════════════════════════════════════════════════════════════════════
 
 _user = get_current_user()
+if not _user or "id" not in _user:
+    st.error("Session expired. Please sign in again.")
+    for key in ["current_user", "auth_token"]:
+        st.session_state.pop(key, None)
+    st.rerun()
 _user_id = _user["id"]
 _user_name = _user.get("name", "User")
 _user_email = _user.get("email", "")
@@ -1431,7 +1437,8 @@ elif page == "tracker":
                 try:
                     import plotly.express as px
                     sc = apps["status"].value_counts().reset_index()
-                    sc.columns = ["Status", "Count"]
+                    sc.columns = sc.columns.tolist()  # normalize
+                    sc = sc.rename(columns={sc.columns[0]: "Status", sc.columns[1]: "Count"})
                     fig = px.pie(sc, values="Count", names="Status", hole=0.45, color="Status",
                         color_discrete_map={"Applied": "#0A66C2", "Interview Scheduled": "#2E7D32", "Under Review": "#F57F17",
                                             "Rejected": "#C62828", "Offer Received": "#1B5E20", "Accepted": "#00695C", "Withdrawn": "#9E9E9E"})

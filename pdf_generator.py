@@ -682,7 +682,9 @@ def _build_developer_html(sections):
 
 def _html_to_pdf(html_string: str) -> bytes:
     buf = io.BytesIO()
-    pisa.CreatePDF(html_string, dest=buf, encoding="utf-8")
+    status = pisa.CreatePDF(html_string, dest=buf, encoding="utf-8")
+    if status.err:
+        raise RuntimeError(f"HTML-to-PDF conversion failed with {status.err} error(s)")
     return buf.getvalue()
 
 
